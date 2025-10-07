@@ -1,0 +1,5 @@
+BUILD_IN=y
+VERSION?=$(shell cat ./version)
+
+#BUILD_MODE=Release
+BUILD_MODE=Debug

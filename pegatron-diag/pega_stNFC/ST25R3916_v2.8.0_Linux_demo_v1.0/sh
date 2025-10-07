@@ -1,0 +1,17 @@
+cmake -DBUILD_I2C=ON -DRFAL_VARIANT=st25r3916 -DRFAL_ANALOG_CONFIG_CUSTOM=ON -DCMAKE_TOOLCHAIN_FILE=./toolchain_arm-linux-gnueabihf.cmake ..
+
+
+#GPIO Process
+echo 68 > /sys/class/gpio/unexport
+cat /sys/class/gpio/gpiochip0/device/dev
+mknod /dev/gpiochip0 c 254 0
+chmod 666 /dev/gpiochip0
+ps aux | grep udev
+
+
+#Dynamic Lib
+LD_LIBRARY_PATH=/pega_bin/.
+nfc_demo_st25r3916
+
+
+

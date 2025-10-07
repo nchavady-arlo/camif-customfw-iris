@@ -1,0 +1,34 @@
+# File : libcsi/Makefile
+#
+# Copyright 2024 NXP
+
+# Override CFLAGS for application sources, remove __ kernel namespace defines
+CFLAGS := $(filter-out -D__%, $(ccflags-y))
+# remove KERNEL include dir
+CFLAGS := $(filter-out -I$(KERNELDIR)%, $(CFLAGS))
+
+
+#CFLAGS += -DAP22 -fshort-enums -DMWU_IPC_UDP
+CFLAGS += -g -Wall -DOS_LINUX  -DMWU_SERVER -DSTDOUT_DEBUG
+CFLAGS += -Wno-stringop-truncation -Wno-packed-bitfield-compat
+
+#ifdef SDKTARGETSYSROOT
+LIBS += $(CFLAGS)
+#endif
+
+#ifdef COVERAGE
+LIBS += -lgcov --coverage -no-pie
+#endif
+
+OBJECTS += event.o wls_api.o wls_processing.o wls_subspace_processing.o wls_radix4Fft.o wls_QR_algorithm.o range_kalman.o
+HEADERS = event.h wls_param_defines.h range_kalman.h wls_api.h wls_processing.h wls_QR_algorithm.h wls_radix4Fft.h wls_structure_defs.h wls_subspace_processing.h
+TARGET = libcsi.a
+
+$(TARGET): $(OBJECTS)
+	ar rcs $@ $^
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+distclean clean:
+	rm -rf *.o *.a

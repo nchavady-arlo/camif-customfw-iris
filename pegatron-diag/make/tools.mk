@@ -1,0 +1,12 @@
+CC=$(CROSS_COMPILE)gcc
+AR=$(CROSS_COMPILE)ar
+LD=$(CROSS_COMPILE)ld
+STRIP=$(CROSS_COMPILE)strip
+#MAKE=make -S
+MAKE=make
+MKDIR=mkdir
+CP=cp
+RM=rm
+SHELL=sh
+
+GEN_DIR=build
