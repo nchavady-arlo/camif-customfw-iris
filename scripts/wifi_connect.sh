@@ -2,7 +2,7 @@ echo SSID=$1, PSK=$2, INTERFACE=$3
 if [ -n "$1" ]
 then
 	sed -i '2d' /config/nxp/wpa.conf
-	sed -i '2issid="'$1'"' /config/nxp/wpa.conf
+	sed -i "2issid=\"$1\"" /config/nxp/wpa.conf
 	sync
 else
 	echo "SSID = empty"
@@ -11,7 +11,7 @@ fi
 if [ -n "$2" ]
 then
 	sed -i '3d' /config/nxp/wpa.conf
-	sed -i '3ipsk="'$2'"' /config/nxp/wpa.conf
+	sed -i "3ipsk=\"$2\"" /config/nxp/wpa.conf
 	sync
 else
 	echo "PSK = empty"
@@ -41,7 +41,7 @@ else
 fi
 
 #-n string is not null
-#proc_id=`pgrep hostapd`
+#proc_id=`pidof hostapd`
 #if [ -n "$proc_id" ]; then
 #killall hostapd
 #sleep 1

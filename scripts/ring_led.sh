@@ -116,8 +116,12 @@ case "$1" in
 		cd /sys/class/leds/ktd2058/		
 		echo 0 > br_white
 
-	;;		
-	
+	;;
+	on_2stage_breath)
+		cd /sys/class/leds/ktd2058/		
+		echo 2 > br_white
+			
+	;;
 	*)
 		echo "Nothing to do!"
 		exit 1

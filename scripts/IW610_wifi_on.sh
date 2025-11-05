@@ -77,6 +77,9 @@ else
 	mfg)
 		insmod $moal_ko fw_name=$fw_path/sduartspi_iw610_combo_mfg.bin.se mfg_mode=1 cal_data_cfg=none drv_mode=1 auto_ds=2 ps_mode=2
 		;;
+	old)
+		insmod $moal_ko fw_name=$fw_path/sduartspi_iw610_old.bin.se cal_data_cfg=$fw_path/WlanCalData_ext.conf
+		;;
 	all)
 		insmod $moal_ko fw_name=$fw_path/sduartspi_iw610.bin.se cal_data_cfg=$fw_path/WlanCalData_ext.conf
 		;;
