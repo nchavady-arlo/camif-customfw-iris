@@ -1,20 +1,30 @@
+#!/bin/sh
+WPA_CONF=/etc/arlo/wpa.conf
 echo SSID=$1, PSK=$2, INTERFACE=$3
-if [ -n "$1" ]
-then
-	sed -i '2d' /config/nxp/wpa.conf
-	sed -i "2issid=\"$1\"" /config/nxp/wpa.conf
-	sync
-else
-	echo "SSID = empty"
-fi
 
-if [ -n "$2" ]
-then
-	sed -i '3d' /config/nxp/wpa.conf
-	sed -i "3ipsk=\"$2\"" /config/nxp/wpa.conf
-	sync
+# Check if network block already exists in the file
+has_existing_config() {
+    grep -q "network={" "$WPA_CONF" 2>/dev/null
+}
+
+if [ -n "$1" ] && [ -n "$2" ]; then
+    # Both SSID and PSK provided - update config
+    echo "Updating network configuration..."
+    sed -i '/network={/,/^}/d' "$WPA_CONF"
+
+    cat >> "$WPA_CONF" << EOF
+network={
+ssid="$1"
+psk="$2"
+}
+EOF
+    sync
+    echo "Network configuration updated in $WPA_CONF"
+elif has_existing_config; then
+    echo "Using existing credentials"
 else
-	echo "PSK = empty"
+    echo "ERROR: No SSID/PSK provided and no existing configuration found"
+    exit 1
 fi
 
 if [ -n "$3" ]; then
@@ -40,6 +50,7 @@ else
 	exit 1
 fi
 
+<<<<<<< HEAD
 #-n string is not null
 #proc_id=`pidof hostapd`
 #if [ -n "$proc_id" ]; then
@@ -47,6 +58,8 @@ fi
 #sleep 1
 #fi
 
+=======
+>>>>>>> update wifi_connect.sh to work with /etc/arlo/wpa.conf
 proc_id=`pidof udhcpc`
 if [ -n "$proc_id" ]; then
 killall udhcpc
@@ -61,7 +74,7 @@ fi
 
 ifconfig $interface up
 sleep 1
-wpa_supplicant -Dnl80211 -i $interface -c /config/nxp/wpa.conf -B
+wpa_supplicant -Dnl80211 -i $interface -c $WPA_CONF -B
 sleep 1
 udhcpc -i $interface -s /etc/init.d/udhcpc.script -b
 
