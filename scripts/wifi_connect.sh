@@ -50,16 +50,6 @@ else
 	exit 1
 fi
 
-<<<<<<< HEAD
-#-n string is not null
-#proc_id=`pidof hostapd`
-#if [ -n "$proc_id" ]; then
-#killall hostapd
-#sleep 1
-#fi
-
-=======
->>>>>>> update wifi_connect.sh to work with /etc/arlo/wpa.conf
 proc_id=`pidof udhcpc`
 if [ -n "$proc_id" ]; then
 killall udhcpc
