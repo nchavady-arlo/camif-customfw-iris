@@ -125,6 +125,107 @@ extern "C" {
 #define GPIO_NR     		113
 #define PAD_UNKNOWN 		0xFFFF
 //==============================================================================
+#if (HW_NEW_GPIO == 1)
+//==============================================================================
+//Power state feedback
+#define IO_I_IDAC							PAD_PM_GPIO4
+//for Sync button
+#define IO_I_SYNC_BUTTON					PAD_PM_GPIO4
+//for ALS interrupt
+#define IO_I_ALS_INT						PAD_PM_GPIO1
+//for ACC interrupt
+#define IO_I_IW610_SPI_INT					PAD_PM_GPIO0
+//for ACC interrupt
+#define IO_I_ACC_INT						PAD_PM_GPIO6
+//for MOTOR
+#define IO_I_MOTOR_nFAULT_PAN 				PAD_PM_UART2_TX
+#define IO_I_MOTOR_nFAULT_RISING 			PAD_PM_UART2_RX
+//for NFC interrupt
+#define IO_I_NFC_IRQ						PAD_PM_GPIO3
+//==============================================================================
+#define IO_O_IW610F_PDn						PAD_GPIO6 			//PDn Low reset
+#define IO_O_IW610F_RST_WL					PAD_SD0_CDZ			//Software reset to reset IW610 WIFI
+#define IO_O_IW610F_RST_BLE					PAD_PM_PSPI0_INT 	//Software reset to reset IW610 BLE
+//==============================================================================
+#define IO_O_IW610G_PDn						PAD_GPIO7 			//PDn Low reset
+#define IO_O_IW610G_RST_WL					PAD_GPIO10			//Software reset to reset IW610 WIFI
+#define IO_O_IW610G_RST_Thread				PAD_GPIO11			//Software reset to reset IW610 Thread
+//==============================================================================
+//for TI amp
+#define IO_O_AUDIO_SHUTDOWN					PAD_GPIO8 //(0:shutdown , 1:active) //AUDIO_AMP_SDZ
+//for motor
+#define IO_O_RISING_MOTOR_nSLEEP			PAD_PM_GPIO11 //(0:disable , 1:enable)
+#define IO_O_PAN_MOTOR_nSLEEP				PAD_PM_PWM0   //(0:disable , 1:enable)
+//==============================================================================
+#define IO_O_MOTOR_CTRL_PIN0				PAD_PM_FUART_RX  	//PWM0
+#define IO_O_MOTOR_CTRL_PIN1				PAD_PM_FUART_TX  	//PWM1
+#define IO_O_MOTOR_CTRL_PIN2				PAD_OUTP_RX0_CH4 	//PWM4
+#define IO_O_MOTOR_CTRL_PIN3				PAD_OUTN_RX0_CH4 	//PWM5
+//==============================================================================
+#define IO_O_IR_CUT_IN1						PAD_OUTP_RX0_CH0
+#define IO_O_IR_CUT_IN2						PAD_OUTN_RX0_CH0
+//==============================================================================
+#define IO_O_CAM_1V8_EN						PAD_PM_GPIO5 		//image sensor power (Low:off, High:On)
+//==============================================================================
+#define IO_O_LED_R							PAD_PM_PWM1
+#define IO_O_LED_G							PAD_PM_GPIO7
+#define IO_O_LED_B							PAD_PM_GPIO8
+//==============================================================================
+#define IO_O_IR_LED_EN						PAD_PM_GPIO2
+#define IO_O_Spotligh_LED_EN				PAD_OUTN_RX0_CH5
+//==============================================================================
+#define IO_O_PWM_IR_Spotlight_LED			PAD_OUTP_RX0_CH5 	//PWM6
+//============================================================================== 
+#define IO_IRLED_CTRL_ON()					Pega_Gpio_pin_output_set(IO_O_IR_LED_EN,	 GPIO_HIGH) 
+#define IO_IRLED_CTRL_OFF()					Pega_Gpio_pin_output_set(IO_O_IR_LED_EN,	 GPIO_LOW)
+//============================================================================== 
+#define IO_SPOTLIGHT_CTRL_ON()				Pega_Gpio_pin_output_set(IO_O_Spotligh_LED_EN,	 GPIO_HIGH)
+#define IO_SPOTLIGHT_CTRL_OFF()				Pega_Gpio_pin_output_set(IO_O_Spotligh_LED_EN,	 GPIO_LOW)
+//==============================================================================
+#define IO_IR_CUT1_CTRL_ON()				Pega_Gpio_pin_output_set(IO_O_IR_CUT_IN1,	 GPIO_LOW) //11/29 Chris modify for correcting icr behavior 
+#define IO_IR_CUT1_CTRL_OFF()				Pega_Gpio_pin_output_set(IO_O_IR_CUT_IN1, 	 GPIO_HIGH)
+#define IO_IR_CUT2_CTRL_ON()				Pega_Gpio_pin_output_set(IO_O_IR_CUT_IN2, 	 GPIO_LOW)
+#define IO_IR_CUT2_CTRL_OFF()				Pega_Gpio_pin_output_set(IO_O_IR_CUT_IN2, 	 GPIO_HIGH)
+//==============================================================================
+#define IO_LED_R_CTRL_ON()					Pega_Gpio_pin_output_set(IO_O_LED_R,	 GPIO_HIGH)
+#define IO_LED_R_CTRL_OFF()					Pega_Gpio_pin_output_set(IO_O_LED_R, 	 GPIO_LOW)
+#define IO_LED_G_CTRL_ON()					Pega_Gpio_pin_output_set(IO_O_LED_G,	 GPIO_HIGH)
+#define IO_LED_G_CTRL_OFF()					Pega_Gpio_pin_output_set(IO_O_LED_G, 	 GPIO_LOW)
+#define IO_LED_B_CTRL_ON()					Pega_Gpio_pin_output_set(IO_O_LED_B,	 GPIO_HIGH)
+#define IO_LED_B_CTRL_OFF()					Pega_Gpio_pin_output_set(IO_O_LED_B, 	 GPIO_LOW)
+//==============================================================================
+#define IO_AMP_SHUTDOWN_ON()				Pega_Gpio_pin_output_set(IO_O_AUDIO_SHUTDOWN,	 	GPIO_LOW)
+#define IO_AMP_SHUTDOWN_OFF()				Pega_Gpio_pin_output_set(IO_O_AUDIO_SHUTDOWN, 	 	GPIO_HIGH)
+
+#if (DEVICE_MOTOR_ENABLE == 1)
+//==============================================================================
+#define IO_AWD8833C_PAN_MOTOR_ON()			Pega_Gpio_pin_output_set(IO_O_PAN_MOTOR_nSLEEP,	 	GPIO_HIGH)
+#define IO_AWD8833C_PAN_MOTOR_OFF()			Pega_Gpio_pin_output_set(IO_O_PAN_MOTOR_nSLEEP,	 	GPIO_LOW)
+//==============================================================================
+#define IO_AWD8833C_RISING_MOTOR_ON()		Pega_Gpio_pin_output_set(IO_O_RISING_MOTOR_nSLEEP,	GPIO_HIGH)
+#define IO_AWD8833C_RISING_MOTOR_OFF()		Pega_Gpio_pin_output_set(IO_O_RISING_MOTOR_nSLEEP,	GPIO_LOW)
+//==============================================================================
+#else //(DEVICE_MOTOR_ENABLE == 0)
+//==============================================================================
+#define IO_AWD8833C_PAN_MOTOR_ON()			Pega_Gpio_Null
+#define IO_AWD8833C_PAN_MOTOR_OFF()			Pega_Gpio_Null
+//==============================================================================
+#define IO_AWD8833C_RISING_MOTOR_ON()		Pega_Gpio_Null
+#define IO_AWD8833C_RISING_MOTOR_OFF()		Pega_Gpio_Null
+//==============================================================================
+#define IO_AWD8833C_AIN1_PIN_ON()			Pega_Gpio_Null
+#define IO_AWD8833C_AIN1_PIN_OFF()			Pega_Gpio_Null
+#define IO_AWD8833C_AIN2_PIN_ON()			Pega_Gpio_Null
+#define IO_AWD8833C_AIN2_PIN_OFF()			Pega_Gpio_Null
+//==============================================================================
+#define IO_AWD8833C_BIN1_PIN_ON()			Pega_Gpio_Null
+#define IO_AWD8833C_BIN1_PIN_OFF()			Pega_Gpio_Null
+#define IO_AWD8833C_BIN2_PIN_ON()			Pega_Gpio_Null
+#define IO_AWD8833C_BIN2_PIN_OFF()			Pega_Gpio_Null
+//==============================================================================
+#endif
+#else	
+//==============================================================================
 //Power state feedback
 #define IO_I_IDAC							PAD_PM_GPIO4
 //for IO Sync button
@@ -153,13 +254,13 @@ extern "C" {
 //for motor
 #define IO_O_RISING_MOTOR_nSLEEP			PAD_GPIO9
 #define IO_O_PAN_MOTOR_nSLEEP				PAD_PM_GPIO11
-#define IO_O_MOTO_PWM0						PAD_PM_PWM0
-#define IO_O_MOTO_PWM1						PAD_PM_PWM1
-#define IO_O_MOTO_PWM2						PAD_PM_GPIO7
-#define IO_O_MOTO_PWM3						PAD_PM_GPIO8
+#define IO_O_MOTOR_CTRL_PIN0				PAD_PM_PWM0
+#define IO_O_MOTOR_CTRL_PIN1				PAD_PM_PWM1
+#define IO_O_MOTOR_CTRL_PIN2				PAD_PM_GPIO7
+#define IO_O_MOTOR_CTRL_PIN3				PAD_PM_GPIO8
 //==============================================================================
-#define IO_O_IR_CUT_IN1						PAD_PM_FUART_RX
-#define IO_O_IR_CUT_IN2						PAD_PM_FUART_TX
+#define IO_O_IR_CUT_IN1						PAD_PM_FUART_RX  //PAD_OUTP_RX0_CH0
+#define IO_O_IR_CUT_IN2						PAD_PM_FUART_TX  //PAD_OUTN_RX0_CH0
 //==============================================================================
 #define IO_O_CAM_1V8_EN						PAD_PM_GPIO5 //image sensor power (Low:off, High:On)
 //==============================================================================
@@ -199,15 +300,15 @@ extern "C" {
 #define IO_AWD8833C_RISING_MOTOR_ON()		Pega_Gpio_pin_output_set(IO_O_RISING_MOTOR_nSLEEP,	GPIO_HIGH)
 #define IO_AWD8833C_RISING_MOTOR_OFF()		Pega_Gpio_pin_output_set(IO_O_RISING_MOTOR_nSLEEP,	GPIO_LOW)
 //==============================================================================
-#define IO_AWD8833C_AIN1_PIN_ON()			Pega_Gpio_pin_output_set(IO_O_MOTO_PWM0, GPIO_HIGH)
-#define IO_AWD8833C_AIN1_PIN_OFF()			Pega_Gpio_pin_output_set(IO_O_MOTO_PWM0, GPIO_LOW)
-#define IO_AWD8833C_AIN2_PIN_ON()			Pega_Gpio_pin_output_set(IO_O_MOTO_PWM1, GPIO_HIGH)
-#define IO_AWD8833C_AIN2_PIN_OFF()			Pega_Gpio_pin_output_set(IO_O_MOTO_PWM1, GPIO_LOW)
+#define IO_AWD8833C_AIN1_PIN_ON()			Pega_Gpio_pin_output_set(IO_O_MOTOR_CTRL_PIN0, GPIO_HIGH)
+#define IO_AWD8833C_AIN1_PIN_OFF()			Pega_Gpio_pin_output_set(IO_O_MOTOR_CTRL_PIN0, GPIO_LOW)
+#define IO_AWD8833C_AIN2_PIN_ON()			Pega_Gpio_pin_output_set(IO_O_MOTOR_CTRL_PIN1, GPIO_HIGH)
+#define IO_AWD8833C_AIN2_PIN_OFF()			Pega_Gpio_pin_output_set(IO_O_MOTOR_CTRL_PIN1, GPIO_LOW)
 //==============================================================================
-#define IO_AWD8833C_BIN1_PIN_ON()			Pega_Gpio_pin_output_set(IO_O_MOTO_PWM2, GPIO_HIGH)
-#define IO_AWD8833C_BIN1_PIN_OFF()			Pega_Gpio_pin_output_set(IO_O_MOTO_PWM2, GPIO_LOW)
-#define IO_AWD8833C_BIN2_PIN_ON()			Pega_Gpio_pin_output_set(IO_O_MOTO_PWM3, GPIO_HIGH)
-#define IO_AWD8833C_BIN2_PIN_OFF()			Pega_Gpio_pin_output_set(IO_O_MOTO_PWM3, GPIO_LOW)
+#define IO_AWD8833C_BIN1_PIN_ON()			Pega_Gpio_pin_output_set(IO_O_MOTOR_CTRL_PIN2, GPIO_HIGH)
+#define IO_AWD8833C_BIN1_PIN_OFF()			Pega_Gpio_pin_output_set(IO_O_MOTOR_CTRL_PIN2, GPIO_LOW)
+#define IO_AWD8833C_BIN2_PIN_ON()			Pega_Gpio_pin_output_set(IO_O_MOTOR_CTRL_PIN3, GPIO_HIGH)
+#define IO_AWD8833C_BIN2_PIN_OFF()			Pega_Gpio_pin_output_set(IO_O_MOTOR_CTRL_PIN3, GPIO_LOW)
 //==============================================================================
 #else //(DEVICE_MOTOR_ENABLE == 0)
 //==============================================================================
@@ -227,7 +328,9 @@ extern "C" {
 #define IO_AWD8833C_BIN2_PIN_ON()			Pega_Gpio_Null
 #define IO_AWD8833C_BIN2_PIN_OFF()			Pega_Gpio_Null
 //==============================================================================
-#endif	
+#endif
+#endif //HW_NEW_GPIO
+//==============================================================================
 int  Pega_Gpio_pin_output_set(int sGpioNum, int bHigh);
 void Pega_Gpio_init(void);
 void Pega_Gpio_Null(void);

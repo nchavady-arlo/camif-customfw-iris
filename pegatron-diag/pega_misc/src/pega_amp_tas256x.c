@@ -1,4 +1,7 @@
-#include <stdint.h>
+/*******************************************************************************
+* File Name: pega_amp_tas256x.c
+*
+*******************************************************************************/
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -642,6 +645,23 @@ void Pega_AMP_Volume_Control(float fdB)
 	   	   
 #endif	   
 }
+
+float Pega_AMP_Volume_Get(void)
+{		
+      uint8_t 	ucRegData = 0;	   
+	  float 	fVolume = 0.0;
+	   
+	  Pega_AMP_Reg_Read(TAS2563_PB_CFG1, &ucRegData);
+	  
+	  ucRegData = ucRegData & 0x3E; //Bit1~Bit5
+      ucRegData = ucRegData >> 1;
+	  
+      fVolume = (float)(ucRegData-1) * 0.5 + 8.5;
+	  
+	  //printf("fVolume:%2.1f\n", fVolume); //Bit0~3 is Gain control	 
+	  
+	  return fVolume;
+}
 //==============================================================================
 int Pega_AMP_Clock_Error_check(void)
 {        
@@ -680,7 +700,7 @@ void Pega_AMP_Reg_Read(uint8_t ucRegID, uint8_t *val)
      
 	 //printf("\r\n%s[%d,%d]", __FUNCTION__,ucRegID,*val);  
 }
-//pega_misc_dbg info 7
+//pega_debug debug info amp_reg
 void Pega_AMP_Reg_Data_Print(void)
 {
 #if 1	

@@ -46,13 +46,13 @@ int Pega_SarADC_init(void)
 				
 	if (mSar_fd < 0)
 	  {
-		  ERR_LOG("can not open sar's node");		  
+		  _LOG_ERROR("can not open sar's node");		  
 		  return -1;
 	  }
 	
 	if (ioctl(mSar_fd, IOCTL_SAR_INIT, &tmp) < 0)
 	  {
-		  ERR_LOG("\n sar init err");
+		  _LOG_ERROR("\n sar init err");
 		  return -1;
 	  }
 	
@@ -78,7 +78,7 @@ int Pega_SarADC_Value_Get(const int eChannel, int *val)
 	
 	if (eChannel >= SAR_ADC_CH_MAX)
 	  {
-	  	ERR_LOG("invalid adc channel(%d)\n",eChannel);
+	  	_LOG_ERROR("invalid adc channel(%d)\n",eChannel);
 		return FAILED;	
 	  }
 	    
@@ -88,7 +88,7 @@ int Pega_SarADC_Value_Get(const int eChannel, int *val)
 				
 		if	(ioctl(mSar_fd, IOCTL_SAR_SET_CHANNEL_READ_VALUE, &sar_tmp) < 0)
 		{
-			 ERR_LOG("can not get sar:ch(%d) value", sar_tmp.channel_value);
+			 _LOG_ERROR("can not get sar:ch(%d) value", sar_tmp.channel_value);
 		 	 return FAILED;							
 		}
 				

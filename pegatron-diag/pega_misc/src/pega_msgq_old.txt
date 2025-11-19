@@ -1,0 +1,143 @@
+/*******************************************************************************
+* File Name: pega_debug.c
+*
+*******************************************************************************/
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/shm.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <linux/netlink.h>
+#include <malloc.h>
+//==============================================================================
+#include <sys/ioctl.h>
+#include <sys/mman.h>
+#include <sys/poll.h>
+#include <math.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/prctl.h>
+#include <pthread.h>
+#include <mqueue.h>
+#include <signal.h>
+#include <sys/stat.h> // For mode constants
+//==============================================================================
+#include "pega_msgq.h"
+//==============================================================================
+#include "main.h"
+#include "pega_schedule.h"
+#include "pega_nv_mode.h"
+#include "pega_gpio.h"
+#include "pega_wifi.h"
+#include "pega_misc_diag.h"
+//==============================================================================
+#if (NEW_MSGQ == 1)
+//==============================================================================
+static mqd_t m_msqQ;  // 全域 queue descriptor
+//==============================================================================
+static stMsgQdata_t   m_stMsgQdata;
+//==============================================================================
+void Pega_msgq_message_handler(union sigval sv) 
+{
+    mqd_t mqdes = *(mqd_t *)sv.sival_ptr;
+    //char buffer[MAX_SIZE];
+    ssize_t bytes_read;
+    //m//ydata_t *recv_data = (mydata_t *)buffer;
+	
+    // 重新註冊通知（必須在最前面）
+    struct sigevent sev;
+    sev.sigev_notify = SIGEV_THREAD;
+    sev.sigev_notify_function = Pega_msgq_message_handler;
+    sev.sigev_notify_attributes = NULL;
+    sev.sigev_value.sival_ptr = &m_msqQ;
+    mq_notify(mqdes, &sev);
+
+    //memset(&m_stMsgQdata, 0, sizeof(m_stMsgQdata));
+    // 讀取 queue 中所有訊息
+    //while ((bytes_read = mq_receive(mqdes, buffer, MAX_SIZE, NULL)) >= 0) 
+	bytes_read = mq_receive(mqdes, (char *)&m_stMsgQdata, MSGQ_BUFF_MAX_SIZE, NULL);
+		
+	{
+        //buffer[bytes_read] = '\0';
+        //printf("[Handler Thread] Received: %s(%d)\n", buffer, bytes_read);
+    }
+	
+	Pega_msgq_attr_info();
+	
+	Pega_msgq_data_info();
+}
+
+//==============================================================================
+void Pega_msgq_listen_init(void)
+{
+	struct mq_attr attr;
+    struct sigevent sev;
+
+    // 設定 queue 屬性（可省略，使用預設）
+    attr.mq_flags = 0;
+    attr.mq_maxmsg = 10;
+    attr.mq_msgsize = MSGQ_BUFF_MAX_SIZE;
+    attr.mq_curmsgs = 0;
+
+    // 開啟（不存在則建立）
+    m_msqQ = mq_open(MSGQ_QUEUE_NAME, O_RDONLY | O_CREAT, 0666, &attr);
+	
+    if (m_msqQ == (mqd_t)-1) 
+	{
+        perror("mq_open");
+        exit(EXIT_FAILURE);
+    }
+
+    // 註冊通知（由 kernel 建 thread 執行 handler）
+    sev.sigev_notify = SIGEV_THREAD;
+    sev.sigev_notify_function = Pega_msgq_message_handler;
+    sev.sigev_notify_attributes = NULL;
+    sev.sigev_value.sival_ptr = &m_msqQ;
+
+    if (mq_notify(m_msqQ, &sev) == -1)
+	{
+        perror("mq_notify");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Receiver ready, waiting for messages...\n");
+    printf("Queue: %s\n", MSGQ_QUEUE_NAME);
+	
+}
+//==============================================================================
+void Pega_msgq_attr_info(void)
+{
+	 struct mq_attr attr;
+	 	 
+	 if (mq_getattr(m_msqQ, &attr) == -1) 
+	 {
+        perror("mq_getattr");
+        exit(EXIT_FAILURE);
+     }
+	
+	 printf("-----------------------\n");
+	 printf("attr.mq_flags        = %x\n", attr.mq_flags);
+	 printf("attr.mq_maxmsg       = %ld\n", attr.mq_maxmsg);
+	 printf("attr.mq_msgsize      = %ld\n", attr.mq_msgsize);
+	 printf("attr.mq_curmsgs      = %ld\n", attr.mq_curmsgs);
+	 printf("-----------------------\n");
+}
+
+void Pega_msgq_data_info(void)
+{		
+	 printf("-----------------------\n");
+	 printf("m_stMsgQdata.eCmdId  = %d\n", m_stMsgQdata.eCmdId);
+	 printf("m_stMsgQdata.CmdName = %s\n", m_stMsgQdata.CmdName);
+	 printf("m_stMsgQdata.value1  = %d\n", m_stMsgQdata.value1);
+	 printf("m_stMsgQdata.value2  = %d\n", m_stMsgQdata.value2);
+	 printf("m_stMsgQdata.value3  = %d\n", m_stMsgQdata.value3);
+	 printf("m_stMsgQdata.value4  = %d\n", m_stMsgQdata.value4);
+	 printf("-----------------------\n");
+	 printf("sizeof(m_stMsgQdata) = %d\n", sizeof(m_stMsgQdata));
+	 printf("-----------------------\n");
+}
+#endif
+//==============================================================================

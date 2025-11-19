@@ -157,7 +157,6 @@
 //sudo systemctl stop serial-getty@ttyS0.service
 //sudo systemctl disable serial-getty@ttyS0.service
 //==============================================================================
-#include "stdint.h"
 #include "stdbool.h"
 //==============================================================================
 #include "stdio.h"

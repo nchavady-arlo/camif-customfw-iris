@@ -2,7 +2,6 @@
 * File Name: pega_pwm.c
 *
 *******************************************************************************/
-#include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -27,21 +26,16 @@
 int Pega_pwm_export(unsigned int pwm)
 {
 	int fd = -1;
-      
-	switch(pwm)	
+    char path[MAX_BUF] = {0};
+	
+	if (pwm > PWM_CH11)
 	{
-		case PWM_CH6:
-			 fd = open(SYSFS_PWM_DIR "/pwmchip6/export", O_WRONLY);
-			 break;
-		
-		case PWM_CH7:
-			 fd = open(SYSFS_PWM_DIR "/pwmchip7/export", O_WRONLY);
-			 break;		
-		
-		default:
-		     break;		
+		return -1;
 	}
-     	
+	
+	snprintf(path, sizeof(path), "%s/pwmchip%d/export", SYSFS_PWM_DIR, pwm);
+	fd = open(path, O_WRONLY);
+	     	
 	if (fd < 0) 
 	  {
 		printf ("\nFailed export PWM(%s)\n", pwm);
@@ -58,21 +52,16 @@ int Pega_pwm_export(unsigned int pwm)
 int Pega_pwm_unexport(unsigned int pwm)
 {
 	int fd = -1;
-      
-	switch(pwm)	
+    char path[MAX_BUF] = {0};
+	
+	if (pwm > PWM_CH11)
 	{
-		case PWM_CH6:
-			 fd = open(SYSFS_PWM_DIR "/pwmchip6/unexport", O_WRONLY);
-			 break;
-		
-		case PWM_CH7:
-			 fd = open(SYSFS_PWM_DIR "/pwmchip7/unexport", O_WRONLY);
-			 break;		
-		
-		default:
-		     break;		
+		return -1;
 	}
-     	
+	
+	snprintf(path, sizeof(path), "%s/pwmchip%d/unexport", SYSFS_PWM_DIR, pwm);
+	fd = open(path, O_WRONLY);
+		     	
 	if (fd < 0) 
 	  {
 		printf ("\nFailed unexport PWM(%s)\n", pwm);
@@ -89,11 +78,16 @@ int Pega_pwm_unexport(unsigned int pwm)
 int Pega_pwm_config(unsigned int pwm, unsigned int period, unsigned int duty_percent)
 {
 	int fd,len_p,len_d;
-	char buf_p[MAX_BUF];
-	char buf_d[MAX_BUF];
-	char path[MAX_BUF];
+	char buf_p[MAX_BUF] = {0};
+	char buf_d[MAX_BUF] = {0};
+	char path[MAX_BUF]  = {0};
   	unsigned int duty_cycle = 0;
-		
+	
+    if (pwm > PWM_CH11)
+	{
+		return -1;
+	}
+ 	
 	duty_cycle = period / 100 * duty_percent;
 	
 	len_p = snprintf(buf_p, sizeof(buf_p), "%d", period);
@@ -129,8 +123,13 @@ int Pega_pwm_config(unsigned int pwm, unsigned int period, unsigned int duty_per
 int Pega_pwm_control(unsigned int pwm, int bEnable)
 {
 	int fd;
-  	char path[MAX_BUF];	
+  	char path[MAX_BUF] = {0};	
   	
+	if (pwm > PWM_CH11)
+	{
+		return -1;
+	}
+	
   	snprintf(path, sizeof(path), "%s/pwmchip%d/pwm0/enable", SYSFS_PWM_DIR, pwm);
   		
   	fd = open(path, O_WRONLY);
@@ -161,20 +160,19 @@ void Pega_pwm_init(unsigned int bIsOn)
 	 {
 		 bIsOn = 1;
 	 }
-	 
+	 	 
 	 if (Pega_pwm_export(PWM_CH6) > -1)//for IR led
 	 {
-	  	 if (Pega_pwm_config(PWM_CH6, PWM_LED_FREQ, PWM_LED_DUTY) > -1)	
+	  	 if (Pega_pwm_config(PWM_CH6, PWM_IR_LED_FREQ, PWM_IR_LED_DUTY) > -1)	
 		 {				 
 	         Pega_pwm_control(PWM_CH6, bIsOn);
 		 }
 	 }
 	 else
 	 {
-		 ERR_LOG("pwm init failed! (IR Led)");  
+		 _LOG_ERROR("pwm init failed! (IR Led)");  
 	 }
-	 
-	 #if 1
+	 	 
 	 if (Pega_pwm_export(PWM_CH7) > -1)//for Spotlight
 	 {
 	  	 if (Pega_pwm_config(PWM_CH7, PWM_SPOT_LED_FREQ, PWM_SPOT_LED_DUTY) > -1)	
@@ -184,7 +182,45 @@ void Pega_pwm_init(unsigned int bIsOn)
 	 }
 	 else
 	 {
-		 ERR_LOG("pwm init failed! (Spotlight)");  
+		 _LOG_ERROR("pwm init failed! (Spotlight)");  
 	 }
+	 
+	 #if 0
+	 if (Pega_pwm_export(PWM_CH0) > -1)//for Spotlight
+	 {
+	  	 if (Pega_pwm_config(PWM_CH0, PWM_SPOT_LED_FREQ, PWM_SPOT_LED_DUTY) > -1)	
+		 {				 
+	         Pega_pwm_control(PWM_CH0, bIsOn);
+		 }
+	 }
+	 else
+	 {
+		 _LOG_ERROR("pwm init failed! (PWM_CH0)");  
+	 }
+	 
+	 if (Pega_pwm_export(PWM_CH1) > -1)//for Spotlight
+	 {
+	  	 if (Pega_pwm_config(PWM_CH1, PWM_SPOT_LED_FREQ, PWM_SPOT_LED_DUTY) > -1)	
+		 {				 
+	         Pega_pwm_control(PWM_CH1, bIsOn);
+		 }
+	 }
+	 else
+	 {
+		 _LOG_ERROR("pwm init failed! (PWM_CH1)");  
+	 }
+	 	 
+	 if (Pega_pwm_export(PWM_CH4) > -1)//for Spotlight
+	 {
+	  	 if (Pega_pwm_config(PWM_CH4, PWM_SPOT_LED_FREQ, PWM_SPOT_LED_DUTY) > -1)	
+		 {				 
+	         Pega_pwm_control(PWM_CH4, bIsOn);
+		 }
+	 }
+	 else
+	 {
+		 _LOG_ERROR("pwm init failed! (PWM_CH4)");  
+	 }	 
+	 
 	 #endif
 }

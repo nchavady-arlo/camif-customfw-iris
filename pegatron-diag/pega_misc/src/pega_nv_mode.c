@@ -2,7 +2,6 @@
 * File Name: pega_nv_mode.c
 *
 *******************************************************************************/
-#include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -87,6 +86,7 @@ static float Pega_NV_Mode_Lux_Update(float fLux)
 //==============================================================================
 void Pega_NV_Mode_nvram_update(void)
 {
+	#if 0
 	float fLuxGain = 1.696; //230605 Chris calibrate als gain
 	int s16NightModeThd = 0, s16DayModeThd = 0;
 	char char_fLuxGain [32];
@@ -115,6 +115,7 @@ void Pega_NV_Mode_nvram_update(void)
 	}		
 	
 	printf("\nPega_NV_Mode_nvram_update(%.3lf)\n", fLuxGain);	
+	#endif
 }
 
 int Pega_NV_EnterNVThreshold_Update(int night_thd)
@@ -417,7 +418,7 @@ void Pega_Diag_Force_Day_Night_Mode(uint8_t IsNightMode)
 	 }
 }
 //==============================================================================
-//pega_misc_dbg info 8
+//pega_debug debug info nvmode
 void Pega_NV_Mode_Data_Print(void)
 {			 
      NV_DBG(printf("\n-----------------------"));	 

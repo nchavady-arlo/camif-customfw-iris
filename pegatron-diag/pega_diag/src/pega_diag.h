@@ -30,6 +30,14 @@ typedef struct {
 //==============================================================================
 typedef enum 
 {
+	E_WIFI_IF_TYPE_NONE = 0,
+	E_WIFI_IF_TYPE_MLAN0,
+	E_WIFI_IF_TYPE_MLAN1,	
+	E_WIFI_IF_TYPE_MAX,
+}eWiFi_IF_EnumType;
+
+typedef enum 
+{
 /*000*/ Diag_CmdId_None = 0,
 /*001*/ Diag_CmdId_HW_Version,
 /*002*/ Diag_CmdId_ICR_Control,
@@ -42,13 +50,14 @@ typedef enum
 /*009*/ Diag_CmdId_MIC_Control,
 /*010*/ Diag_CmdId_Audio_Control,
 /*011*/ Diag_CmdId_Button_Control,
-/*012*/ Diag_CmdId_OTA_Control,
-/*013*/ Diag_CmdId_Therma_Control,
-/*014*/ Diag_CmdId_wifi_Control,
-/*015*/ Diag_CmdId_Power_Off_Control,
-/*016*/ Diag_CmdId_Out2TelnetPegaMisc,
-/*017*/ Diag_CmdId_BurnIn,
-/*018*/ Diag_CmdId_Max,
+/*012*/ Diag_CmdId_NFC_Control,
+/*013*/ Diag_CmdId_OTA_Control,
+/*014*/ Diag_CmdId_Therma_Control,
+/*015*/ Diag_CmdId_wifi_Control,
+/*016*/ Diag_CmdId_Power_Off_Control,
+/*017*/ Diag_CmdId_Out2TelnetPegaMisc,
+/*018*/ Diag_CmdId_BurnIn,
+/*019*/ Diag_CmdId_Max,
 } stDiagMsgqCmdIdType;
 //==============================================================================
 #ifdef __cplusplus

@@ -9,11 +9,18 @@ extern "C" {
 //==============================================================================
 //20kHz to 200kHz input PWM frequency can be supported to avoid audible noise
 //TPS92201 20kHz ~ 200kHz
-#define PWM_LED_FREQ			20000
-#define PWM_LED_DUTY			50
-
+#define PWM_IR_LED_FREQ			20000
+#define PWM_IR_LED_DUTY			50
+//==============================================================================
 #define PWM_SPOT_LED_FREQ		30000
 #define PWM_SPOT_LED_DUTY		50
+//==============================================================================
+#define PWM_LED_R_FREQ			20000
+#define PWM_LED_R_DUTY			50
+#define PWM_LED_G_FREQ			20000
+#define PWM_LED_G_DUTY			50
+#define PWM_LED_B_FREQ			20000
+#define PWM_LED_B_DUTY			50
 //==============================================================================
 typedef enum 
 {
@@ -25,6 +32,10 @@ typedef enum
 	PWM_CH5, //PAD_PM_GPIO5
 	PWM_CH6, //PAD_PM_GPIO6
 	PWM_CH7, //PAD_PM_GPIO7
+	PWM_CH8,
+	PWM_CH9,
+	PWM_CH10,
+	PWM_CH11,
 	PWM_CH_MAX,
 }PwmEnumType;
 //==============================================================================

@@ -118,10 +118,11 @@ extern "C" {
 void Pega_AMP_Device_I2C_open(void);
 void Pega_AMP_Device_I2C_close(void);
 //==============================================================================
-void Pega_AMP_Initialize(int bIsNewCfg, float fdB);
-void Pega_AMP_Software_Reset(void);
-void Pega_AMP_Software_Mute(uint8_t bMute);
-void Pega_AMP_Volume_Control(float fdB);
+void  Pega_AMP_Initialize(int bIsNewCfg, float fdB);
+void  Pega_AMP_Software_Reset(void);
+void  Pega_AMP_Software_Mute(uint8_t bMute);
+void  Pega_AMP_Volume_Control(float fdB);
+float Pega_AMP_Volume_Get(void);
 //==============================================================================
 int  Pega_AMP_Clock_Error_check(void);
 //==============================================================================

@@ -2,7 +2,6 @@
 * File Name: pega_als_opt300x.c
 *
 *******************************************************************************/
-#include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -75,6 +74,32 @@ static int OPT300X_I2C_ReadFromSlave(uint8_t regAddr, uint16_t *regData)
      #endif
 	 
      return ret;
+}
+
+static uint16_t OPT300x_lux_to_opt3004_reg(float lux)
+{
+    uint8_t E = 0;
+    uint32_t M;
+    
+    // 找出最小的 E 使 M <= 0xFFFF
+    for (E = 0; E < 16; E++) 
+	{
+        M = (uint32_t)(lux * 100 / (1 << E) + 0.5); // 四捨五入
+        if (M <= 0xFFFF)
+            break;
+    }
+    
+    if (E == 16) 
+	{
+        // 超過範圍
+        E = 15;
+        M = 0xFFFF;
+    }
+    
+    // 將 E 放到高 4 bits，M 放到低 16 bits
+    uint16_t reg = ((E & 0x0F) << 12) | ((M >> 4) & 0x0FFF);
+    
+    return reg;
 }
 
 static void OPT300x_set_mode(uint16_t wMode)
@@ -195,10 +220,10 @@ void OPT300x_Device_Init(void)
 	  m_stOpt300x.wDeviceID = 0x0000;
 	  m_stOpt300x.wConfReg  = 0x0000;
 	  /* Enable automatic full-scale setting mode */
-	  m_stOpt300x.wConfReg |= OPT300x_CONFIGURATION_RN_AUTO;
-	  m_stOpt300x.wConfReg |= OPT300x_CONFIGURATION_CT;
+	  m_stOpt300x.wConfReg |= OPT300x_CONFIGURATION_RN_AUTO; // RN=1100, Auto-range
+	  m_stOpt300x.wConfReg |= OPT300x_CONFIGURATION_CT;		 // CT=1, conversion time 800ms
 		/* Ensure device is in shutdown initially */	  
-	  OPT300x_set_mode(OPT300x_CONFIGURATION_M_CONTINUOUS);	  	 
+	  OPT300x_set_mode(OPT300x_CONFIGURATION_M_CONTINUOUS);	 // 10 or 11, continuous mode 	 
 	  /* Configure for latched window-style comparison operation */	
 	  m_stOpt300x.wConfReg &= ~OPT300x_CONFIGURATION_ME;
 	  m_stOpt300x.wConfReg &= ~OPT300x_CONFIGURATION_FC_MASK;
@@ -207,11 +232,27 @@ void OPT300x_Device_Init(void)
 	  	{
 	      OPT300X_I2C_WriteToSlave(OPT300x_REG_SYS_CONF, m_stOpt300x.wConfReg);
 	    }  
-		
+
+      //Config interrupt by threshold
+      //OPT300X_I2C_WriteToSlave(OPT300x_REG_LOW_LIMIT,  OPT300x_lux_to_opt3004_reg(100.0)); //100 lux
+      //OPT300X_I2C_WriteToSlave(OPT300x_REG_HIGH_LIMIT, OPT300x_lux_to_opt3004_reg(800.0)); //800 lux
+	  
 	  if (OPT300X_I2C_ReadFromSlave(OPT300x_REG_DEVICE_ID , &wVal) == SUCCEED)		
 	  	{
 		  m_stOpt300x.wDeviceID = wVal;
 		}  
+}
+
+void OPT300x_Comparison_Limit_Set(uint8_t bIsLowLimit, uint16_t u16LimitVal)
+{
+	 if (bIsLowLimit != 0)
+	  	{
+	      OPT300X_I2C_WriteToSlave(OPT300x_REG_LOW_LIMIT, u16LimitVal);
+	    } 
+	 else
+		{
+	      OPT300X_I2C_WriteToSlave(OPT300x_REG_HIGH_LIMIT, u16LimitVal);
+	    } 	
 }
 
 float OPT300x_Read_Lux_Handler(void)
@@ -264,7 +305,7 @@ R_OK:檔案是否可讀取
 W_OK:檔案是否可寫入
 X_OK:檔案是否可執行
 */
-//pega_misc_dbg info 5
+//pega_debug debug info als
 void OPT300x_Data_Print(void)
 {
 #if 1	
@@ -286,7 +327,7 @@ void OPT300x_Data_Print(void)
 #endif	 
 }
 //==============================================================================
-//pega_misc_dbg info 6
+//pega_debug debug info als_reg
 void OPT300x_Register_Info_Print(void)
 {   
 	  #if 1

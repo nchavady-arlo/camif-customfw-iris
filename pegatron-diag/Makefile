@@ -1,15 +1,16 @@
 # GEN_DIR is defined at file: VENDOR/PEGA/make/tools.mk
 # GEN_DIR = build
-# include vendor.mk
+include vendor.mk
 #include evn, PEGA_ROOT_DIR
-export SDK_HARDWARE=C551
+
 BUILD_ROOT_DIR=$(shell pwd)
 export BUILD_ROOT_DIR
-#
+
 include $(BUILD_ROOT_DIR)/make/tools.mk
-#
+
 BUILD_INSTALL_DIR=$(BUILD_ROOT_DIR)/$(GEN_DIR)
 export BUILD_INSTALL_DIR
+
 
 ALL_BUILD = $(patsubst %/, %, $(dir $(wildcard */Makefile)))
 
@@ -26,7 +27,6 @@ build_general:
 	@$(MKDIR) -p $(GEN_DIR)/lib
 	
 build_all:
-	@echo "$(ALL_BUILD)"
 	@$(foreach i, $(ALL_BUILD), \
 		$(MAKE) -C $i || exit 1; \
 	)

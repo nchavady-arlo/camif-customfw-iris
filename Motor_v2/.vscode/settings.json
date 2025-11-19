@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "pega_gpio.h": "c",
+        "pega_motor_awd8833.h": "c"
+    }
+}

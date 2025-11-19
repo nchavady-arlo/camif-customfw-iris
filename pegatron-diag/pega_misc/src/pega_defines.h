@@ -6,28 +6,37 @@
  */
 #ifndef PEGA_DEFINES_H
 #define PEGA_DEFINES_H
-
+//==============================================================================
 #ifdef __cplusplus
 extern "C" {
 #endif
+/*
+I2C bus (New HW):
+I2C0 : ALS/AMP/NFC/ACC		<PAD_GPIO0,  PAD_GPIO1>
+I2C1 : Image sensor			<I2C1_SCL,   I2C1_SDA>
+I2C2 : RingRGB1/RingRGB2 	<I2C2_SCL,   I2C2_SDA>
+I2C3 : Debug board			<PM_I2C_CLK, PM_I2C_SDA>
+*/
 //==============================================================================
-#include <sys/time.h>
+#include <stdint.h>
+#include "lw_logger.h"
 //==============================================================================
-#define MISC_VERSTION	    "0.01"
+#define MISC_VERSTION	    "0.13"
 //==============================================================================
 #define THREAD_PROC_1          "t1_DebugProc"
 #define THREAD_PROC_2          "t2_Schedule"
-#define THREAD_PROC_3          "t3_DiagProc"
+#define THREAD_PROC_3          "t3_MsgQ_process"
 #define THREAD_PROC_4          "t4_Key_Detection"
 #define THREAD_PROC_5          "t5_LedFlash"
 #define THREAD_PROC_6          "t6_GpioInt"
-#define THREAD_PROC_7          "t7_MotorInt1"
-#define THREAD_PROC_8          "t8_MotorInt2"
+#define THREAD_PROC_7          "t7_AlsInt"
+#define THREAD_PROC_8          "t8_MotorInt1"
+#define THREAD_PROC_9          "t9_MotorInt2"
+#define THREAD_PROC_10         "t10_NFC_IO_poll"
+#define THREAD_PROC_11         "t11_NFC_process"
 //==============================================================================
-#define ERR_LOG          printf
-#define INFO_LOG         printf
-#define WARN_LOG         printf
-#define INFO_SYSLOG      printf
+#define WIFI_IFNAME1         	"mlan0"
+#define WIFI_IFNAME2         	"mlan1"
 //==============================================================================
 #define PT_PRINTF(fmt, ...) \
 		{ \
@@ -44,6 +53,9 @@ extern "C" {
     fprintf(stdout, "[%s] " fmt "\n", get_time(), ##args); \
 	fflush(stdout);\
 } while(0)
+//==============================================================================
+#define HW_NEW_GPIO				0
+#define BUTTON_DET_EN			0
 //==============================================================================	
 #define DEVICE_ALS_ENABLE		1
 #define DEVICE_AMP_ENABLE		1
@@ -99,6 +111,14 @@ typedef enum
 	E_WIFI_IF_TYPE_MAX,
 }eWiFi_IF_EnumType;
 
+typedef enum 
+{
+	E_WIFI_STATE_NONE = 0,
+	E_WIFI_STATE_CONNECT,
+	E_WIFI_STATE_CONNECTED,	
+	E_WIFI_STATE_DISCONNECT,
+	E_WIFI_STATE_MAX,
+}eWiFi_STATE_EnumType;
 
 typedef enum 
 {
@@ -122,10 +142,13 @@ typedef enum
 /*00*/LED_State_None = 0,
 /*01*/LED_State_Off,
 /*02*/LED_State_System_Start_Up,
-/*03*/LED_State_Wifi_Ready,
-/*04*/LED_State_Wifi_off,
-/*05*/LED_State_Wifi_fw_error,
-/*06*/LED_State_Power_off,
+/*03*/LED_State_Wifi_FW_Ready,
+/*04*/LED_State_Wifi_Connect_trigger,
+/*05*/LED_State_Wifi_Connected,
+/*06*/LED_State_Wifi_disconnect,
+/*07*/LED_State_Wifi_off,
+/*08*/LED_State_Wifi_fw_error,
+/*09*/LED_State_Power_off,
 /*00*/LED_State_MAX,
 }LedStateEnumType;
 //==============================================================================

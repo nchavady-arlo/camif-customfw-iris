@@ -171,6 +171,8 @@ extern "C" {
 //==============================================================================
 int  Pega_Gpio_pin_output_set(int sGpioNum, int bHigh);
 void Pega_Gpio_init(void);
+void Pega_Gpio_wifi_power_down(int bIsIW610F);
+void Pega_Gpio_wifi_software_reset(int bIsIW610F);
 void Pega_Gpio_Data_Info_Print(void);
 //==============================================================================
 #ifdef __cplusplus

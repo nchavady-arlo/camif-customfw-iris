@@ -25,11 +25,10 @@
 //==============================================================================
 #include "main.h"
 //==============================================================================
+#include "pega_msgq.h"
 #include "pega_defines.h"
 #include "pega_schedule.h"
 #include "pega_wifi.h"
-#include "pega_misc_diag.h"
-#include "pega_debug.h"
 //==============================================================================
 static pthread_mutex_t m_Mutexlock;
 //==============================================================================
@@ -132,17 +131,18 @@ static void pega_schedule_Event_Processing(void)
 		case schEVT_DeleteAll:
 			 return;
 		//==============================================================================
+		//pega_misc_dbg sch 2
 		case schEVT_Load_wifi_fw:
 		     Pega_wifi_load_firmware_enable();
+			 return;
+			 
+		case schEVT_wifi_connect_enable:
+		     Pega_wifi_connect_enable();
 			 return;	 
 		//==============================================================================
-        case schEVT_System_diag_Cmd_Execution:
-		     Pega_diag_msgq_Cmd_Execution();  
-			 return;	
-        
-        case schEVT_System_debug_info_Execution:
-		     Pega_debug_schedule_command();  
-			 return; 		
+        case schEVT_System_msgq_Cmd_Execution:
+		     Pega_msgq_command_handler_exec();
+			 return;        	
         
         case schEVT_Factory_Reset:		      
 			 return;			 
@@ -381,7 +381,7 @@ int pega_schedule_Event_Time_Count_Get(unsigned char ucEvent, unsigned int *u16D
 	return rtn;
 }
 //==============================================================================
-//pega_misc_dbg info 2
+//pega_debug debug info sch
 void pega_schedule_Data_Info_Print(void)
 {     
 #if 1	

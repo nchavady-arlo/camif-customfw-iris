@@ -2,10 +2,7 @@ TARGET_NAME	= diag
 
 LDDEPS		= -lpthread -lrt -lm -Llib
 
-SRC			= \
-	src/pega_diag.c \
-	src/pega_network_ip.c \
-	src/pega_diag_msgq_cmd.c
+SRC	= $(wildcard src/*.c)
 
 INCLUDE		+= -Iinclude
 

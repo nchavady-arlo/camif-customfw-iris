@@ -7,10 +7,31 @@
 #include <sys/ioctl.h>
 #include <linux/spi/spidev.h>
 #include <errno.h>
-
+//==============================================================================
 #define SPI_DEVICE "/dev/spidev0.0" // Replace with your SPI device
 #define TRANSFER_SIZE 8 // Number of bytes to transfer
-
+//==============================================================================
+/*IFS's SPI clock table.
+clk_rate[8]=46875, 
+clk_rate[9]=93750, 
+clk_rate[10]=187500, 
+clk_rate[11]=375000, 
+clk_rate[12]=421875, 
+clk_rate[13]=562500, 
+clk_rate[14]=750000, 
+clk_rate[15]=843750, 
+clk_rate[16]=1125000, 
+clk_rate[17]=1500000, //1.5 MHz
+clk_rate[18]=1687500, 
+clk_rate[19]=2250000, 
+clk_rate[20]=3000000, //3.0 MHz
+clk_rate[21]=3375000, 
+clk_rate[22]=4500000, 
+clk_rate[23]=6000000, //6.0 MHz
+clk_rate[24]=6750000, 
+clk_rate[25]=9000000, //9.0 MHz
+*/
+//==============================================================================
 int main() {
     int spi_fd;
     uint8_t tx_buffer[TRANSFER_SIZE] = {0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
@@ -19,7 +40,7 @@ int main() {
         .tx_buf = (unsigned long)tx_buffer,
         .rx_buf = (unsigned long)rx_buffer,
         .len = TRANSFER_SIZE,
-        .speed_hz = 1000000, // Example speed: 1 MHz
+        .speed_hz = 1500000, // Example speed: 1.5 MHz
         .delay_usecs = 0,
         .bits_per_word = 10,
     };
@@ -48,7 +69,7 @@ int main() {
     }
 
     // Set SPI speed (Hz)
-    uint32_t speed = 1000000; // 1MHz
+    uint32_t speed = 1500000; // 1.5 MHz
     if (ioctl(spi_fd, SPI_IOC_WR_MAX_SPEED_HZ, &speed) < 0) {
         perror("can't set max speed hz");
         close(spi_fd);

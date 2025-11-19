@@ -125,7 +125,7 @@ int Parser_audio_ai_config(void)
 	
 	uint8_t u8Reg = 0,u8Value = 0;
     //char *psetcConfigFile  = "/etc/audio_ai.cfg";
-    //char *ps8audaiConfigFile  = "/config/audio.cfg";
+    //char *ps8audaiConfigFile  = "/data/audio.cfg";
     
 	printf("\n[%s]m_ps8audaiConfigFile=%s\n", __func__, m_ps8audaiConfigFile);
 	

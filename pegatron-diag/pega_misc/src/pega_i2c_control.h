@@ -8,7 +8,9 @@
 #ifndef PEGA_I2C_CTRL_H
 #define PEGA_I2C_CTRL_H
 
+#include <linux/i2c-dev.h>
 #include "pega_defines.h"
+#include "pega_i2c_control.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,8 +28,13 @@ typedef enum
     I2C_FMT_END/**< Reserved */
 } ISP_I2C_FMT;
 //==============================================================================
-int pega_i2c_Write(int i2cFile, int slaveAddr, unsigned int reg, uint16_t value, ISP_I2C_FMT fmt);
-int pega_i2c_Read(int i2cFile, int slaveAddr, unsigned int reg, uint16_t *val, ISP_I2C_FMT fmt);
+void pega_i2c_Init(void);
+void pega_i2c_Deinit(void);
+//==============================================================================
+int  pega_i2c_Write(int i2cFile, int slaveAddr, unsigned int reg, uint16_t value, ISP_I2C_FMT fmt);
+int  pega_i2c_Read(int i2cFile, int slaveAddr, unsigned int reg, uint16_t *val, ISP_I2C_FMT fmt);
+int  pega_i2c_RW_Bytes(int i2cFile, struct i2c_rdwr_ioctl_data *packets);
+ 
 //==============================================================================
 #ifdef __cplusplus
 }

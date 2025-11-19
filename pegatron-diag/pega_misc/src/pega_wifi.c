@@ -26,6 +26,7 @@
 #include "main.h"
 //==============================================================================
 #include "pega_wifi.h"
+#include "pega_utilites.h"
 #include "pega_ble_uart.h"
 //==============================================================================
 static pthread_t m_thread_id = 0;
@@ -47,12 +48,18 @@ static int Pega_wifi_load_firmware(void)
 void Pega_wifi_load_firmware_enable(void)
 {		 
 	 int bIsReady = 0;
-	
+	 char buff[1024]={0};
+	 
      bIsReady = Pega_wifi_load_firmware();	
 	 
 	 if (bIsReady > 0)
 	 {
-		 system("sh /scripts/IW610_wifi_on.sh");
+		 //system("sh /scripts/IW610_wifi_on.sh");
+		 //using modprobe to load wifi driver. 2025/09/12
+		 if (pega_util_shell("sh /scripts/IW610_wifi_enable.sh", buff, sizeof(buff)) != 0)
+		  {
+			 printf("Error: %s failed\n", "sh /scripts/IW610_wifi_enable.sh");       
+		  }  
 	 }
 	 else
 	 {
@@ -60,5 +67,15 @@ void Pega_wifi_load_firmware_enable(void)
 	 }
 	 
 	 //printf("\n[%s]%d\n", __func__, bIsReady); 	 
+}
+//==============================================================================
+void Pega_wifi_connect_enable(void)
+{	    
+     char buff[1024]={0};
+	 
+     if (pega_util_shell("sh /scripts/wifi_connect.sh", buff, sizeof(buff)) != 0)
+	 {
+        printf("Error: %s failed\n", "/scripts/wifi_connect.sh");       
+     }  
 }
 //==============================================================================

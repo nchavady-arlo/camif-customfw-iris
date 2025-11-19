@@ -11,21 +11,28 @@ extern "C" {
 //==============================================================================
 typedef struct
 {	  	
-      uint16_t	bIsBurnInOn			:1;	  
-	  uint16_t	bIsALSDisable		:1;	  
+      uint16_t	bIsBurnInOn			:1;
+	  uint16_t	bIsRFTestEnable		:1;
+	  uint16_t	bIsALSDisable		:1;
 	  uint16_t	bIsWiFiDisable		:1;
-	  uint16_t	bIsACCDisable		:1;
+	  uint16_t	bIsAmpDisable		:1;
 	  uint16_t	bIsNFCDisable		:1;
-	  uint16_t	bIsMotorDisable		:1;
+	  uint16_t	bIsRGBLedDisable	:1;
+	  uint16_t	bIsRingLedDisable	:1;
+	  uint16_t	bIsMotorDisable		:1;	  
 	  uint16_t	bIsWiFiFwReady		:1;
 	  uint16_t	bIsWiFiFwError		:1;
-	  uint16_t	bReserved			:8;
+	  uint16_t	bIsDtboReady		:1;
+	  uint16_t	bIsVoiceDemoEnable	:1;
+	  uint16_t	bIsVoiceDemoReady	:1;
+	  uint16_t	bReserved			:2;
 	  
+	  uint8_t	eWIFI_State; //->ifs_sdmmc0
 	  uint8_t	eWIFI1_if; //->ifs_sdmmc0
 	  uint8_t	eWIFI2_if; //->ifs_sdmmc1
 }stMiscType;
 //==============================================================================
-void Pega_Misc_Burn_Enable_Control(uint8_t bIsEnable);
+void Pega_Misc_BurnIn_Enable_Control(uint8_t bIsEnable);
 //==============================================================================
 void Pega_Misc_ALS_Disable_Control(uint8_t bIsDisable);
 void Pega_Misc_WiFi_Disable_Control(uint8_t bIsDisable);

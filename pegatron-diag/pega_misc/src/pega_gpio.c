@@ -2,7 +2,6 @@
 * File Name: pega_gpio.c
 *
 *******************************************************************************/
-#include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -16,6 +15,7 @@
 #include <pthread.h>
 //==============================================================================
 #include "pega_gpio.h"
+#include "pega_utilites.h"
 //==============================================================================
 #define VALUE_MAX 30
 //==============================================================================
@@ -28,7 +28,7 @@ static int Pega_Gpio_pin_state_init(int sGpioNum, int bInput, int bHigh)
     
     if ((fp = fopen("/sys/class/gpio/export", "w")) == NULL)   
     {  
-        ERR_LOG("Cannot open export file.");  
+        _LOG_ERROR("Cannot open export file.");  
         return FAILED;  
     }  
     	
@@ -39,7 +39,7 @@ static int Pega_Gpio_pin_state_init(int sGpioNum, int bInput, int bHigh)
     
     if ((fp = fopen(s, "rb+")) == NULL)   
     {  
-        ERR_LOG("Cannot open %s.",s);  
+        _LOG_ERROR("Cannot open %s.",s);  
         return FAILED;  
     }  
     
@@ -64,17 +64,25 @@ static int Pega_Gpio_pin_state_init(int sGpioNum, int bInput, int bHigh)
 
 int Pega_Gpio_direction_set(int bOutput, unsigned char uGPIONum)
 {
-	char buff[255];
+	char cmd[255]={0};
+	char buff[1024]={0};
 	 
-	snprintf(buff, sizeof(buff), "echo %d > /sys/class/gpio/export", uGPIONum);
-    system(buff);  
-	 
+	snprintf(cmd, sizeof(cmd), "echo %d > /sys/class/gpio/export", uGPIONum);
+      
+	if (pega_util_shell(cmd, buff, sizeof(buff)) != 0)
+	{
+        printf("Error: %s failed\n", cmd);        
+    }
+	
 	if (bOutput)	 
-	    snprintf(buff, sizeof(buff), "echo out > /sys/class/gpio/gpio%d/direction", uGPIONum);
+	    snprintf(cmd, sizeof(cmd), "echo out > /sys/class/gpio/gpio%d/direction", uGPIONum);
 	else
-	    snprintf(buff, sizeof(buff), "echo in > /sys/class/gpio/gpio%d/direction", uGPIONum);
+	    snprintf(cmd, sizeof(cmd), "echo in > /sys/class/gpio/gpio%d/direction", uGPIONum);
 	         
-    system(buff);  
+    if (pega_util_shell(cmd, buff, sizeof(buff)) != 0)
+	{
+        printf("Error: %s failed\n", cmd);       
+    } 
 	 
 	 return SUCCEED;
 }
@@ -90,13 +98,13 @@ int Pega_Gpio_Read(int pin)
 	
 	if (-1 == fd) 
 	{
-		ERR_LOG("Failed to open gpio(%d) value for reading!", pin);
+		_LOG_ERROR("Failed to open gpio(%d) value for reading!", pin);
 		return (FAILED);
 	}
 
 	if (-1 == read(fd, value_str, 3)) 
 	{
-		ERR_LOG("Failed to read gpio value!");
+		_LOG_ERROR("Failed to read gpio value!");
 		return(FAILED);
 	}
 
@@ -121,7 +129,7 @@ int Pega_Gpio_pin_output_set(int sGpioNum, int bHigh)
   
     if ((fp = fopen(s1, "rb+")) == NULL)   
     {  
-        ERR_LOG("Cannot open %s.",s1);  
+        _LOG_ERROR("Cannot open %s.",s1);  
         return FAILED;  
     }  
     	
@@ -142,10 +150,11 @@ void Pega_Gpio_init(void)
 	 printf("\n%s\n", __func__);
 	 //Set gpio to input
 	 Pega_Gpio_pin_state_init(IO_I_IDAC, 				GPIO_INPUT, GPIO_NULL);
+	 #if (BUTTON_DET_EN == 0)
 	 Pega_Gpio_pin_state_init(IO_I_SYNC_BUTTON, 		GPIO_INPUT, GPIO_NULL);	 
-	//  Pega_Gpio_pin_state_init(IO_I_IW610_SPI_INT, 		GPIO_INPUT, GPIO_NULL); //controlled by OTBR
+	 #endif
 	 Pega_Gpio_pin_state_init(IO_I_ACC_INT, 			GPIO_INPUT, GPIO_NULL);
-	 Pega_Gpio_pin_state_init(IO_I_NFC_IRQ, 			GPIO_INPUT, GPIO_NULL);      
+	 // Pega_Gpio_pin_state_init(IO_I_NFC_IRQ, 			GPIO_INPUT, GPIO_NULL);     //controlled by gpiochip0 
 	 //For Motor
 	 #if (DEVICE_MOTOR_ENABLE == 1)
 	 Pega_Gpio_pin_state_init(IO_I_MOTOR_nFAULT_PAN, 	GPIO_INPUT, GPIO_NULL);      
@@ -153,12 +162,10 @@ void Pega_Gpio_init(void)
 	 #endif
 	 
 	 //Set gpio to output
-	 //can not control PDn to prevent loading fw failed.
-	 //Pega_Gpio_pin_state_init(IO_O_IW610F_PDn, 			GPIO_OUTPUT, GPIO_LOW); 	//Low reset
+	 //can not control PDn to prevent loading fw failed.	 
 	 Pega_Gpio_pin_state_init(IO_O_IW610F_RST_WL, 		GPIO_OUTPUT, GPIO_HIGH);
 	 Pega_Gpio_pin_state_init(IO_O_IW610F_RST_BLE, 		GPIO_OUTPUT, GPIO_HIGH);
 	 //can not control PDn to prevent loading fw failed.
-	 //Pega_Gpio_pin_state_init(IO_O_IW610G_PDn, 			GPIO_OUTPUT, GPIO_LOW); 	//Low reset 
 	 Pega_Gpio_pin_state_init(IO_O_IW610G_RST_WL, 		GPIO_OUTPUT, GPIO_HIGH); 
 	 //Pega_Gpio_pin_state_init(IO_O_IW610G_RST_Thread, 	GPIO_OUTPUT, GPIO_HIGH);  	//controlled by OTBR
 	 
@@ -168,10 +175,10 @@ void Pega_Gpio_init(void)
 	 #if (DEVICE_MOTOR_ENABLE == 1)
 	 Pega_Gpio_pin_state_init(IO_O_RISING_MOTOR_nSLEEP, GPIO_OUTPUT, GPIO_LOW);
 	 Pega_Gpio_pin_state_init(IO_O_PAN_MOTOR_nSLEEP,    GPIO_OUTPUT, GPIO_LOW);	 	 
-	 Pega_Gpio_pin_state_init(IO_O_MOTO_PWM0, 			GPIO_OUTPUT, GPIO_LOW);
-	 Pega_Gpio_pin_state_init(IO_O_MOTO_PWM1, 			GPIO_OUTPUT, GPIO_LOW);	 
-	 Pega_Gpio_pin_state_init(IO_O_MOTO_PWM2, 			GPIO_OUTPUT, GPIO_LOW);
-	 Pega_Gpio_pin_state_init(IO_O_MOTO_PWM3, 			GPIO_OUTPUT, GPIO_LOW);
+	 Pega_Gpio_pin_state_init(IO_O_MOTOR_CTRL_PIN0, 	GPIO_OUTPUT, GPIO_LOW);
+	 Pega_Gpio_pin_state_init(IO_O_MOTOR_CTRL_PIN1, 	GPIO_OUTPUT, GPIO_LOW);	 
+	 Pega_Gpio_pin_state_init(IO_O_MOTOR_CTRL_PIN2, 	GPIO_OUTPUT, GPIO_LOW);
+	 Pega_Gpio_pin_state_init(IO_O_MOTOR_CTRL_PIN3, 	GPIO_OUTPUT, GPIO_LOW);	 
 	 #endif
 	 //For IRcut
 	 Pega_Gpio_pin_state_init(IO_O_IR_CUT_IN1, 		GPIO_OUTPUT, GPIO_LOW);
@@ -239,7 +246,7 @@ void Pega_Gpio_IRCut_Control(uint8_t bFlag)
 	IO_IR_CUT1_CTRL_OFF(); 	
 	IO_IR_CUT2_CTRL_OFF(); 	 
 }
-//pega_misc_dbg info 4
+//pega_debug debug info gpio
 void Pega_Gpio_Data_Info_Print(void)
 {     
 #if 1	  
@@ -253,6 +260,9 @@ void Pega_Gpio_Data_Info_Print(void)
 	 printf("\n IO_I_MOTOR_nFAULT_PAN    => %d", IO_I_MOTOR_nFAULT_PAN);
 	 printf("\n IO_I_MOTOR_nFAULT_RISING => %d", IO_I_MOTOR_nFAULT_RISING);
 	 printf("\n IO_I_NFC_IRQ             => %d", IO_I_NFC_IRQ);
+	 printf("\n-----------------------");
+	 printf("\n IO_O_PWM_IR_LED          => %d", IO_O_PWM_IR_LED);
+	 printf("\n IO_O_PWM_Spotlight_LED   => %d", IO_O_PWM_Spotlight_LED);
 	 printf("\n-----------------------");	 
 	 printf("\n IO_O_IW610F_PDn          => %d", IO_O_IW610F_PDn);
 	 printf("\n IO_O_IW610F_RST_WL       => %d", IO_O_IW610F_RST_WL);
@@ -263,11 +273,11 @@ void Pega_Gpio_Data_Info_Print(void)
 	 printf("\n-----------------------");	
 	 printf("\n IO_O_RISING_MOTOR_nSLEEP => %d", IO_O_RISING_MOTOR_nSLEEP);
 	 printf("\n IO_O_PAN_MOTOR_nSLEEP    => %d", IO_O_PAN_MOTOR_nSLEEP);
-	 printf("\n IO_O_MOTO_PWM0           => %d", IO_O_MOTO_PWM0);
-	 printf("\n IO_O_MOTO_PWM1           => %d", IO_O_MOTO_PWM1);
-	 printf("\n IO_O_MOTO_PWM2           => %d", IO_O_MOTO_PWM2);
-	 printf("\n IO_O_MOTO_PWM3           => %d", IO_O_MOTO_PWM3);
-	 printf("\n-----------------------");	 
+	 printf("\n IO_O_MOTOR_CTRL_PIN0       => %d", IO_O_MOTOR_CTRL_PIN0);
+	 printf("\n IO_O_MOTOR_CTRL_PIN1       => %d", IO_O_MOTOR_CTRL_PIN1);
+	 printf("\n IO_O_MOTOR_CTRL_PIN2       => %d", IO_O_MOTOR_CTRL_PIN2);
+	 printf("\n IO_O_MOTOR_CTRL_PIN3       => %d", IO_O_MOTOR_CTRL_PIN3);
+	 printf("\n-----------------------");
 	 printf("\n IO_O_AUDIO_SHUTDOWN      => %d", IO_O_AUDIO_SHUTDOWN);
 	 printf("\n-----------------------");	 
 	 printf("\n IO_O_IR_CUT_IN1          => %d", IO_O_IR_CUT_IN1);

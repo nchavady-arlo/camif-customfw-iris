@@ -326,3 +326,125 @@ int pega_bt_is_interface_exist(const char *ifname, int bDebug)
     return bRtn;
 }
 
+//cat /sys/kernel/debug/mmc0/ios
+int pega_netip_interface_check_sd0(const char *ifname, int bDebug)
+{
+	int bRtn = -1;
+	
+    DIR *pDir;
+    struct dirent *de;
+    char s1[160]={0};
+	
+	//printf("\n%s\n", __func__);  
+	
+    if (ifname == NULL) 
+	{
+        return bRtn;
+    }
+	
+	sprintf(s1,"/sys/devices/platform/soc/1f008400.ifs_sdmmc0/mmc_host/mmc0/mmc0:0001/mmc0:0001:1/net");
+	
+    pDir = opendir(s1);
+	
+    if (pDir == NULL) 
+	{
+		if (bDebug > 0)
+		{
+			printf("Cannot opendir %s\n",s1); 
+		}		
+        return bRtn;
+    }
+ 
+    while (NULL != (de = readdir(pDir))) 
+	{
+        if (strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0) 
+		{
+            continue;
+        }
+				
+		if (!strcmp(de->d_name, ifname))
+		{
+			if (bDebug > 0)
+			{
+				printf("Found: Interface %s\n", de->d_name);
+			}
+			bRtn = 0;
+			goto fun_end;
+		}
+    }
+
+	if (bDebug > 0)
+	 {
+		printf("Not found: Interface %s\n", ifname);
+	 }
+			
+fun_end:
+    
+	closedir(pDir);
+	
+	//printf("closedir(%s)\n", s1); 
+	
+    return bRtn;
+}
+
+//pega_test sd1 "mlan0" / "mlan1"
+//cat /sys/kernel/debug/mmc1/ios
+int pega_netip_interface_check_sd1(const char *ifname, int bDebug)
+{
+	int bRtn = -1;
+	
+    DIR *pDir;
+    struct dirent *de;
+    char s1[160]={0};
+	
+	//printf("\n%s\n", __func__);  
+	
+    if (ifname == NULL) 
+	{
+        return bRtn;
+    }
+		
+	sprintf(s1,"/sys/devices/platform/soc/1f282600.ifs_sdmmc1/mmc_host/mmc1/mmc1:0001/mmc1:0001:1/net");
+	
+    pDir = opendir(s1);
+	
+    if (pDir == NULL) 
+	{
+		if (bDebug > 0)
+		{
+			printf("Cannot opendir %s\n",s1); 
+		}
+        return bRtn;
+    }
+ 
+    while (NULL != (de = readdir(pDir))) 
+	{
+        if (strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0) 
+		{
+            continue;
+        }
+				
+		if (!strcmp(de->d_name, ifname))
+		{
+			if (bDebug > 0)
+			{
+				printf("Found: Interface %s\n", de->d_name);
+			}
+			bRtn = 0;
+			goto fun_end;
+		}
+    }
+
+    if (bDebug > 0)
+	 {
+		printf("Not found: Interface %s\n", ifname);
+	 }
+			
+fun_end:
+    
+	closedir(pDir);
+	
+	//printf("closedir(%s)\n", s1); 
+	
+    return bRtn;
+}

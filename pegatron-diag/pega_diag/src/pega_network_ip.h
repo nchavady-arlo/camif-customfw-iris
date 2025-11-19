@@ -14,6 +14,9 @@ extern "C" {
 int pega_netip_ip_get(const char *ifname, char *ip, int len);
 int pega_netip_is_interface_exist(const char *ifname, int bDebug);
 //==============================================================================
+int pega_netip_interface_check_sd0(const char *ifname, int bDebug);
+int pega_netip_interface_check_sd1(const char *ifname, int bDebug);
+//==============================================================================
 #ifdef __cplusplus
 }
 #endif

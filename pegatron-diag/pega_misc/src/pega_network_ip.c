@@ -223,11 +223,11 @@ int pega_netip_ip_get(const char *ifname, char *ip, int len)
 		return -1;
 	}
 	
-	printf("\n[%s]ifname=%s\n", __func__, ifname); 
+	//printf("\n[%s]ifname=%s\n", __func__, ifname); 
 	
 	memset(ip, 0, len);
 		
-	if (pega_netip_parse_inet4(ifname, ip, 1) > -1)
+	if (pega_netip_parse_inet4(ifname, ip, 0) > -1)
 	{	
 		return 0;		
 	}

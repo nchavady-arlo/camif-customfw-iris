@@ -172,6 +172,32 @@ void Pega_Gpio_init(void)
 	 Pega_Gpio_pin_state_init(IO_O_LED_G, 			GPIO_OUTPUT, GPIO_LOW);
 	 Pega_Gpio_pin_state_init(IO_O_LED_B, 			GPIO_OUTPUT, GPIO_LOW);
 }
+//pega_gpio gpio wifi1
+//pega_gpio gpio wifi2
+void Pega_Gpio_wifi_power_down(int bIsIW610F)
+{
+	 printf("\n[%s] bIsIW610F=%d \n", __func__, bIsIW610F);  
+	 
+	 Pega_Gpio_pin_state_init((bIsIW610F > 0)? IO_O_IW610F_PDn : IO_O_IW610G_PDn, GPIO_OUTPUT, GPIO_LOW);	
+}
+
+void Pega_Gpio_wifi_software_reset(int bIsIW610F)
+{
+	 printf("\n[%s] bIsIW610F=%d \n", __func__, bIsIW610F);  
+	 
+	 if (bIsIW610F > 0)
+	 {
+		Pega_Gpio_pin_output_set(IO_O_IW610F_RST_WL, GPIO_LOW);	
+		usleep(1000*300); 
+		Pega_Gpio_pin_output_set(IO_O_IW610F_RST_WL, GPIO_HIGH);	
+	 }
+	 else
+	 {
+		Pega_Gpio_pin_output_set(IO_O_IW610G_RST_WL, GPIO_LOW);	
+		usleep(1000*300); 
+		Pega_Gpio_pin_output_set(IO_O_IW610G_RST_WL, GPIO_HIGH);	
+	 }
+}
 //pega_gpio gpio info
 void Pega_Gpio_Data_Info_Print(void)
 {     

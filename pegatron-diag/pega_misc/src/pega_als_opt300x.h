@@ -38,6 +38,7 @@ extern "C" {
 #define OPT300x_CONFIGURATION_CRF						BIT(7)
 #define OPT300x_CONFIGURATION_FH						BIT(6)
 #define OPT300x_CONFIGURATION_FL						BIT(5)
+#define OPT300x_CONFIGURATION_POL						BIT(3) //INT 0:low active, 1:high active
 #define OPT300x_CONFIGURATION_ME						BIT(2)
 
 #define OPT300x_CONFIGURATION_FC_MASK					(3 << 0)
@@ -76,7 +77,8 @@ void 	OPT300x_Device_I2C_open(void);
 void 	OPT300x_Device_I2C_close(void);
 //==============================================================================
 int      OPT300x_Is_Init_Already(void);
-void 	 OPT300x_Device_Init(void);;
+void 	 OPT300x_Device_Init(void);
+void 	 OPT300x_Comparison_Limit_Set(uint8_t bIsLowLimit, uint16_t u16LimitVal);
 float 	 OPT300x_Read_Lux_Handler(void);
 float 	 OPT300x_Lux_Value_Get(void);
 uint16_t OPT300x_Device_ID_Get(void);

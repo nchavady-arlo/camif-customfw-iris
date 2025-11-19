@@ -59,12 +59,30 @@ int main(int argc, char* argv[])
   		if (!strcmp(argv[2],"init"))
 		{
 			Pega_Gpio_init();
-		}		
+		}
+		else if (!strcmp(argv[2],"wifi1"))
+		{
+			Pega_Gpio_wifi_power_down(1);
+		}
+		else if (!strcmp(argv[2],"wifi2"))
+		{
+			Pega_Gpio_wifi_power_down(0);
+		}
         else if (!strcmp(argv[2],"info"))
 		{
 			Pega_Gpio_Data_Info_Print();
 		}
   	  }
+	else if (!strcmp(argv[1],"wifi"))
+  	  {
+  		if (!strcmp(argv[2],"reset"))
+		{			
+			if (argv[3] != NULL)
+			{
+				Pega_Gpio_wifi_software_reset(atoi(argv[3]));
+			}
+		}		
+  	  }	  
 	else if (!strcmp(argv[1],"adc"))
   	  {
   		if (!strcmp(argv[2],"init"))

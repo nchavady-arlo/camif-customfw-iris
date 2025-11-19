@@ -25,11 +25,11 @@ typedef enum
 /*000*/schEVT_None = 0,  
 /*001*/schEVT_DeleteAll, 
 /*002*/schEVT_Load_wifi_fw,
+/*003*/schEVT_wifi_connect_enable,
 
-/*200*/schEVT_System_diag_Cmd_Execution = 200,
-/*201*/schEVT_System_debug_info_Execution,
-/*202*/schEVT_Factory_Reset,
-/*203*/schEVT_Max, 
+/*200*/schEVT_System_msgq_Cmd_Execution = 200,
+/*201*/schEVT_Factory_Reset,
+/*202*/schEVT_Max, 
 }enScheduleEventType;
 
 typedef struct

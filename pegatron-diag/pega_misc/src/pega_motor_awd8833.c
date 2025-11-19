@@ -7,7 +7,6 @@
  *
  */
 //============================================================================== 
-#include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -23,7 +22,6 @@
 #include <pthread.h>
 //============================================================================== 
 #include "pega_gpio.h"
-#include "pega_motor_interrupt.h"
 //============================================================================== 
 #include "pega_motor_awd8833.h"
 //==============================================================================
@@ -770,16 +768,16 @@ void awd8833c_GPIO_Value_Print(void)
 		{
 			case 0:
 			default:
-				 sprintf(path,"/sys/class/gpio/gpio%d/value", IO_O_MOTO_PWM0);
+				 sprintf(path,"/sys/class/gpio/gpio%d/value", IO_O_MOTOR_CTRL_PIN0);
 				 break;
 			case 1:
-				 sprintf(path,"/sys/class/gpio/gpio%d/value", IO_O_MOTO_PWM1);
+				 sprintf(path,"/sys/class/gpio/gpio%d/value", IO_O_MOTOR_CTRL_PIN1);
 				 break;
 			case 2:
-				 sprintf(path,"/sys/class/gpio/gpio%d/value", IO_O_MOTO_PWM2);
+				 sprintf(path,"/sys/class/gpio/gpio%d/value", IO_O_MOTOR_CTRL_PIN2);
 				 break;
 			case 3:
-				 sprintf(path,"/sys/class/gpio/gpio%d/value", IO_O_MOTO_PWM3);
+				 sprintf(path,"/sys/class/gpio/gpio%d/value", IO_O_MOTOR_CTRL_PIN3);
 				 break;	 
 		}
 	 
@@ -799,10 +797,10 @@ void awd8833c_GPIO_Value_Print(void)
 	 }
 	 
 	 printf("-----------------------\n");
-	 printf("IO_O_MOTO_PWM0  = %d\n", gpio[0]);
-	 printf("IO_O_MOTO_PWM1  = %d\n", gpio[1]);	 
-	 printf("IO_O_MOTO_PWM2  = %d\n", gpio[2]);
-	 printf("IO_O_MOTO_PWM3  = %d\n", gpio[3]);
+	 printf("IO_O_MOTOR_CTRL_PIN0  = %d\n", gpio[0]);
+	 printf("IO_O_MOTOR_CTRL_PIN1  = %d\n", gpio[1]);	 
+	 printf("IO_O_MOTOR_CTRL_PIN2  = %d\n", gpio[2]);
+	 printf("IO_O_MOTOR_CTRL_PIN3  = %d\n", gpio[3]);
 	 printf("-----------------------\n");	 
 }
 //==============================================================================

@@ -68,7 +68,7 @@ static void* Pega_led_flash_TaskHandler(void* argv)
 		      IO_LED_B_CTRL_ON();
 		  }
 		  
-		  usleep(1000*500); //0.5s
+		  usleep(1000 * m_stLED.u16Period); //0.5s
 		  
 		  if (m_stLED.eLedFlashing_Color & LED_FLASH_COLOR_R) 		 
 		  {
@@ -108,9 +108,7 @@ int Pega_led_flash_Led_Flashing_Check(void)
 }
 //pega_camcli misc set led_pattern 0 
 int Pega_led_flash_Pattern_Set(uint16_t ePattern)
-{	
-	//INFO_LOG("[%s]ePattern=%d,m_thread_id=%d", __func__,ePattern, (int)m_thread_id);
-	
+{			
 	if (m_thread_id != 0)
 	{
 		pthread_cancel(m_thread_id);
@@ -203,10 +201,13 @@ static const stLedPatternPriorityType m_stLedPatternPriorityTbl[] =
 /*00*/{  LED_State_None,				 	0},
 /*01*/{  LED_State_Off,				 		1},
 /*02*/{  LED_State_System_Start_Up,		    5},
-/*03*/{  LED_State_Wifi_Ready,		       10},
-/*04*/{  LED_State_Wifi_off,		       10},
-/*05*/{  LED_State_Wifi_fw_error,		   10},
-/*16*/{  LED_State_Power_off,		 	  100},
+/*03*/{  LED_State_Wifi_FW_Ready,	       10},
+/*04*/{  LED_State_Wifi_Connect_trigger,   10},
+/*05*/{  LED_State_Wifi_Connected,	       10},
+/*06*/{  LED_State_Wifi_disconnect,	       10},
+/*07*/{  LED_State_Wifi_off,		       10},
+/*08*/{  LED_State_Wifi_fw_error,		   10},
+/*09*/{  LED_State_Power_off,		 	  100},
 };
 
 static int Pega_led_flash_state_priority_get(const int ePattern)
@@ -274,11 +275,20 @@ int Pega_led_flash_state_Set(uint16_t estate)
 		case LED_State_System_Start_Up:
 		     ePattern = LED_PATTERN_FLASHING_YELLOW;
 		     break;
-		case LED_State_Wifi_Ready:
+		case LED_State_Wifi_FW_Ready:
+		     ePattern = LED_PATTERN_COLOR_YELLOW;
+		     break;
+		case LED_State_Wifi_Connect_trigger:
+		     ePattern = LED_PATTERN_FLASHING_BLUE;
+		     break;
+		case LED_State_Wifi_Connected:
 		     ePattern = LED_PATTERN_COLOR_BLUE;
 		     break;
+		case LED_State_Wifi_disconnect:
+		     ePattern = LED_PATTERN_COLOR_CYAN;
+		     break;	 
 		case LED_State_Wifi_off:
-		     ePattern = LED_PATTERN_COLOR_YELLOW;
+		     ePattern = LED_PATTERN_COLOR_MAGENTA;
 		     break;	 
 		case LED_State_Wifi_fw_error:
 		     ePattern = LED_PATTERN_COLOR_RED;
