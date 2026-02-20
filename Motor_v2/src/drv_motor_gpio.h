@@ -1,22 +1,10 @@
 #ifndef _PEGA_GPIO_H_
 #define _PEGA_GPIO_H_
 
-#include <linux/of_gpio.h>         // for of_get_named_gpio(), of_gpio_*()
+#include <linux/of_gpio.h>
 #include <linux/gpio.h>
 #include <linux/platform_device.h>
 
-/*
-	Use GPIOD Function
-| --------------------------------------------- | ------------------------------------------------ | ------------------------------------------------ |
-| `devm_gpiod_get()` / `devm_gpiod_get_index()` | 從 device tree（或 ACPI）根據 label 取得 GPIO descriptor | 可設定方向                                            |
-| `gpiod_direction_input()`                     | 將 GPIO 設為輸入                                      | 一般不常用，因為 `devm_gpiod_get(..., GPIOD_IN)` 就可設定方向  |
-| `gpiod_direction_output(desc, value)`         | 設為輸出並設初始值                                        | 同上，通常用 `devm_gpiod_get(..., GPIOD_OUT_LOW/HIGH)` |
-| `gpiod_set_value(desc, value)`                | 設定 GPIO 輸出值（0 or 1）                              | 只有在 GPIO 已為輸出狀態時才有效                              |
-| `gpiod_get_value(desc)`                       | 讀取 GPIO 輸入值（回傳 0 or 1）                           | 用於 input GPIO                                    |
-| `gpiod_set_consumer_name(desc, "name")`       | 設定這個 GPIO 的 consumer 名稱                          | 非必要，但有助於 debug                                   |
-| `gpiod_put(desc)`                             | 釋放 GPIO descriptor（非 devm 版本用）                   | 如果不用 `devm_` 管理資源時才要手動釋放                         |
-*/
-//==============================================================================
 #define PAD_PM_UART2_TX     63
 #define PAD_PM_UART2_RX     64
 #define PAD_GPIO9           17
@@ -26,14 +14,15 @@
 #define PAD_PM_PWM1         58
 #define PAD_PM_PWM0         59
 
-//for MOTOR
+// Interrupt pin
 #define MOTOR_nFAULT_PAN_PIN 				PAD_PM_UART2_TX
 #define MOTOR_nFAULT_RISING_PIN  			PAD_PM_UART2_RX
 //==============================================================================
-//for motor
+// Sel pin
 #define RISING_MOTOR_nSLEEP_PIN 			PAD_GPIO9
 #define PAN_MOTOR_nSLEEP_PIN 				PAD_PM_GPIO11
 //==============================================================================
+// Contorl pin
 #define MOTO_PWM0_PIN						PAD_PM_PWM0
 #define MOTO_PWM1_PIN						PAD_PM_PWM1
 #define MOTO_PWM2_PIN						PAD_PM_GPIO7
@@ -65,7 +54,8 @@ extern struct gpio_desc *IO_O_MOTO_PWM1;
 extern struct gpio_desc *IO_O_MOTO_PWM2;
 extern struct gpio_desc *IO_O_MOTO_PWM3;
 
-int Motor_gpio_init(struct platform_device *pdev);
+int drv_motor_config_io(struct platform_device *pdev);
+void drv_motor_io_init(void);
 
 
 #endif /* _PEGA_GPIO_H_ */

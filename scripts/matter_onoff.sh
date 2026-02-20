@@ -9,4 +9,4 @@ ACTION=$1
 NODE_ID=$2
 ENDPOINT_ID=$3
 
-chip-tool onoff "$ACTION" "$NODE_ID" "$ENDPOINT_ID" --storage-directory /config/chip-tool
+chip-tool onoff "$ACTION" "$NODE_ID" "$ENDPOINT_ID" --storage-directory /data/chip-tool

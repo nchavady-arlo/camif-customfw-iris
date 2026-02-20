@@ -12,7 +12,7 @@ case "$MODE" in
     echo "MODE=on_network_device"
     echo "NODE_ID=$NODE_ID"
     echo "PIN_CODE=$SSID"  
-    chip-tool pairing onnetwork "$NODE_ID" "$SSID" --storage-directory /config/chip-tool
+    chip-tool pairing onnetwork "$NODE_ID" "$SSID" --storage-directory /data/chip-tool
     ;;
   wifi_device)
     echo "MODE=wifi_device"
@@ -21,6 +21,6 @@ case "$MODE" in
     echo "PASSWORD=$PASSWORD"
     echo "PIN_CODE=$PIN_CODE"
     echo "DISCRIMINATOR=$DISCRIMINATOR"
-    chip-tool pairing ble-wifi "$NODE_ID" "$SSID" "$PASSWORD" "$PIN_CODE" "$DISCRIMINATOR" --storage-directory /config/chip-tool
+    chip-tool pairing ble-wifi "$NODE_ID" "$SSID" "$PASSWORD" "$PIN_CODE" "$DISCRIMINATOR" --storage-directory /data/chip-tool
     ;;
 esac

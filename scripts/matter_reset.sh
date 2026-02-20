@@ -1,4 +1,4 @@
 #!/bin/sh
 rm -fr /tmp/chip_* 
-rm -rf /config/chip-tool
-mkdir -p /config/chip-tool
+rm -rf /data/chip-tool
+mkdir -p /data/chip-tool

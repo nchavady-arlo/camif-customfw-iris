@@ -1,47 +1,14 @@
-/*
- * File: pega_motor_awd8833.c
- *
- * Author: Leo<wangzhi@awinic.com>
- *
- * Copyright (c) 2023 AWINIC Technology CO., LTD
- *
- */
-//============================================================================== 
 #include <linux/ioctl.h>
 #include <linux/timer.h>
 #include <linux/jiffies.h>
 //============================================================================== 
-#include "pega_gpio.h"
-#include "pega_motor_awd8833.h"
-//==============================================================================
-/*
-   // I_AOUT / I_BOUT:  AIN1/2, BIN1/2
-   // I_AOUT forward:   AIN1=1, AIN2=0
-   // I_AOUT reverse:   AIN1=0, AIN2=1
-   // I_AOUT brake:     AIN1=1, AIN2=1
-   // I_AOUT coast:     AIN1=0, AIN2=0
-   // I_BOUT forward:   BIN1=1, BIN2=0
-   // I_BOUT reverse:   BIN1=0, BIN2=1
-   // I_BOUT brake:     BIN1=1, BIN2=1
-   // I_BOUT coast:     BIN1=0, BIN2=0
-*/
-//==============================================================================
+#include "drv_motor_gpio.h"
+#include "drv_motor_awd8833.h"
+
 static u8  g_full_step_state = AW_FULL_STEP_1;
 static u8  g_half_step_state = AW_HALF_STEP_1;
 
-//==============================================================================
-void awd8833c_gpio_init(void)
-{	 
-	IO_AWD8833C_AIN1_PIN_OFF();
-	IO_AWD8833C_AIN2_PIN_OFF();
-	IO_AWD8833C_BIN1_PIN_OFF();
-	IO_AWD8833C_BIN2_PIN_OFF();
-	 	 
-	IO_AWD8833C_PAN_MOTOR_OFF();
-	IO_AWD8833C_RISING_MOTOR_OFF();
-}
-
-void awd8833c_set_enable(u8 en_select, u8 bIsRisingMotor)
+void drv_motor_sel(u8 en_select, u8 bIsRisingMotor)
 {
 	if (en_select) 
 	{	
@@ -53,17 +20,12 @@ void awd8833c_set_enable(u8 en_select, u8 bIsRisingMotor)
 	}
 }
 
-
-void awd8833c_step2angle(int motor)
-{
-
-}
 /**
   * @brief Motor full step forward drive.
   * @param None
   * @retval None
   */
-void awd8833c_full_step_forward_function(void)
+void drv_motor_fullstep_forward(void)
 {
 	switch (g_full_step_state) 					//now state
 	{
@@ -100,7 +62,7 @@ void awd8833c_full_step_forward_function(void)
   * @param None
   * @retval None
   */
-void awd8833c_full_step_reverse_function(void)
+void drv_motor_fullstep_reverse(void)
 {
 	switch (g_full_step_state)
 	{
@@ -138,7 +100,7 @@ void awd8833c_full_step_reverse_function(void)
   * @param None
   * @retval None
   */
-void awd8833c_half_step_forward_function(void)
+void drv_motor_halfstep_forward(void)
 {
 	switch (g_half_step_state) 
 	{
@@ -187,13 +149,12 @@ void awd8833c_half_step_forward_function(void)
 	}	
 }
 
-
 /**
   * @brief Motor half step reverse drive.
   * @param None
   * @retval None
   */
-void awd8833c_half_step_reverse_function(void)
+void drv_motor_halfstep_reverse(void)
 {
 	switch (g_half_step_state) 
 	{
@@ -247,7 +208,7 @@ void awd8833c_half_step_reverse_function(void)
   * @note This function is for restore the last state 
   * @retval None
   */
-void awd8833c_restore_state(int motor)
+void drv_motor_restore_IOstatus(int motor)
 {
 	//Disable the all motor
 	IO_AWD8833C_PAN_MOTOR_OFF();	
@@ -361,7 +322,7 @@ void awd8833c_restore_state(int motor)
   * @note This function is for stop motor but not go to sleep state.
   * @retval None
   */
-void awd8833c_stop(void)
+void drv_motor_stop(void)
 {
 	IO_AWD8833C_PAN_MOTOR_OFF();	
 	IO_AWD8833C_RISING_MOTOR_OFF();

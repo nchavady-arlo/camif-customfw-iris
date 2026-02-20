@@ -34,7 +34,7 @@ if [ "$RUNNING_PIDS" ]; then
 fi
 
 # Check if List-1 file doesn't exist
-if [ ! -f /config/origin/wpa_list1.json ]; then
+if [ ! -f /data/origin/wpa_list1.json ]; then
         CHANNEL=$(iw mlan0 info 2>/dev/null | awk '$1 == "channel" {print $2}')
         BSSID=$(iwconfig mlan0 2>/dev/null | grep -oE 'Access Point: ([0-9A-Fa-f:]{17})' | awk '{print $3}')
         MO_MAC=$(ifconfig mlan0 2>/dev/null | grep -oE 'HWaddr ([0-9A-Fa-f:]{17})' | awk '{print $2}')

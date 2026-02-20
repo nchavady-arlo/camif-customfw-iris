@@ -3,40 +3,40 @@ main()
 {
 	case "$1" in
 	on)
-		chip-tool onoff on 1 1 --storage-directory /config/chip-tool
+		chip-tool onoff on 1 1 --storage-directory /data/chip-tool
 		;;
 	off)
-		chip-tool onoff off 1 1 --storage-directory /config/chip-tool
+		chip-tool onoff off 1 1 --storage-directory /data/chip-tool
 		;;
 	red)
-		chip-tool colorcontrol move-to-hue-and-saturation 0 254 0 0 0 1 1 --storage-directory /config/chip-tool
+		chip-tool colorcontrol move-to-hue-and-saturation 0 254 0 0 0 1 1 --storage-directory /data/chip-tool
 		;;
 	orange)
-		chip-tool colorcontrol move-to-hue-and-saturation 20 254 0 0 0 1 1 --storage-directory /config/chip-tool
+		chip-tool colorcontrol move-to-hue-and-saturation 20 254 0 0 0 1 1 --storage-directory /data/chip-tool
 		;;
 	yellow)
-		chip-tool colorcontrol move-to-hue-and-saturation 42 254 0 0 0 1 1 --storage-directory /config/chip-tool
+		chip-tool colorcontrol move-to-hue-and-saturation 42 254 0 0 0 1 1 --storage-directory /data/chip-tool
 		;;
 	green)
-		chip-tool colorcontrol move-to-hue-and-saturation 85 254 0 0 0 1 1 --storage-directory /config/chip-tool
+		chip-tool colorcontrol move-to-hue-and-saturation 85 254 0 0 0 1 1 --storage-directory /data/chip-tool
 		;;
 	blue)
-		chip-tool colorcontrol move-to-hue-and-saturation 170 254 0 0 0 1 1 --storage-directory /config/chip-tool
+		chip-tool colorcontrol move-to-hue-and-saturation 170 254 0 0 0 1 1 --storage-directory /data/chip-tool
 		;;
 	pink)
-		chip-tool colorcontrol move-to-hue-and-saturation 230 200 0 0 0 1 1 --storage-directory /config/chip-tool
+		chip-tool colorcontrol move-to-hue-and-saturation 230 200 0 0 0 1 1 --storage-directory /data/chip-tool
 		;;
 	purple)
-		chip-tool colorcontrol move-to-hue-and-saturation 200 254 0 0 0 1 1 --storage-directory /config/chip-tool
+		chip-tool colorcontrol move-to-hue-and-saturation 200 254 0 0 0 1 1 --storage-directory /data/chip-tool
 		;;
 	white)
-		chip-tool colorcontrol move-to-hue-and-saturation 0 0 0 0 0 1 1 --storage-directory /config/chip-tool
+		chip-tool colorcontrol move-to-hue-and-saturation 0 0 0 0 0 1 1 --storage-directory /data/chip-tool
 		;;
 	up)
-		chip-tool levelcontrol step 0 25 0 0 0 1 1 --storage-directory /config/chip-tool
+		chip-tool levelcontrol step 0 25 0 0 0 1 1 --storage-directory /data/chip-tool
 		;;
 	down)
-		chip-tool levelcontrol step 1 25 0 0 0 1 1 --storage-directory /config/chip-tool
+		chip-tool levelcontrol step 1 25 0 0 0 1 1 --storage-directory /data/chip-tool
 		;;
 	level)
 		brightness=$(echo "$2" | tr -d '[:space:]%' )
@@ -59,7 +59,7 @@ main()
 		esac
 
 		echo "Mapped brightness: ${2}% → Level ${level_val}"
-		chip-tool levelcontrol move-to-level "$level_val" 0 0 0 1 1 --storage-directory /config/chip-tool
+		chip-tool levelcontrol move-to-level "$level_val" 0 0 0 1 1 --storage-directory /data/chip-tool
 		;;
 	*)
 		echo "Matter Light command error $1!"

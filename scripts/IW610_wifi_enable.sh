@@ -30,10 +30,14 @@ if ifconfig $interface
 		echo "Interface($interface) is exist"
 else
 	cd /config/modules/5.10
-	modprobe moal mod_para=nxp/wifi_mod_para.conf
-
+	if [ -z "$1" ]; then
+		modprobe moal mod_para=nxp/wifi_mod_para.conf
+	else
+		#modprobe moal mod_para=/data/wifi_mod_para.conf
+		modprobe moal mod_para="$1"
+	fi
 	compare_interface_mac
 fi
 }
 
-main
+main $1

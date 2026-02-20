@@ -25,17 +25,23 @@ mfgmfgbridge()
 	./mfgbridge
 }
 
-wait_interface()
+wait_interface() 
 {
-    wifi_ifs=$(ifconfig -a|grep mlan0|awk '{print $1}')
+    echo "Waiting for mlan0..."
+    timeout=30
 
-    while [ "$wifi_ifs" != "mlan0" ]
-    do
-		echo "wifi_ifs($wifi_ifs)"
-		wifi_ifs=$(ifconfig -a|grep mlan0|awk '{print $1}')
+	while ! ifconfig -a | grep -q '^mlan0'; do
+		sleep 1
+		timeout=$((timeout-1))
+		echo "mlan0 not ready ($timeout seconds left)"
+
+		if [ "$timeout" -le 0 ]; then
+			echo "ERROR: Timeout waiting for mlan0"
+			return 1
+		fi
     done
 
-	sleep 1
+    echo "mlan0 is ready"
 }
 
 main()
@@ -45,25 +51,30 @@ main()
 	interface="mlan0"
 
 	fw_path=/nxp
-	moal_ko=/lib/moal.ko
-	mlan=/lib/mlan.ko
+	#moal_ko=/lib/moal.ko
+	#mlan=/lib/mlan.ko
+	moal_ko=/config/modules/5.10/moal.ko
+	mlan=/config/modules/5.10/mlan.ko
 
-	rmmod -r moal
+	# Remove old module
+	rmmod -r moal 2>/dev/null
 
-if ifconfig $interface
-	then
-		echo "Interface($interface) is exist"
+if ifconfig "$interface" >/dev/null 2>&1; then
+	echo "Interface ($interface) exists"
 else
 	#can not control PDn to prevent loading fw failed.
 	#wifi_hardware_reset
-	if [ "$1" == "wifi1" ]; then
+	if [ "$1" = "wifi1" ]; then
 		disable_wifi2
 	else
 		disable_wifi1
 	fi
 
-	if [ -e $mlan ]; then
-		insmod $mlan
+	# Load mlan
+	if [ -e "$mlan" ]; then
+		insmod "$mlan"
+	else
+		echo "Error: $mlan not found!"
 	fi
 	#-e file: True if file exists (can be a file, directory, or other type)
 	if [ -e $moal_ko ]; then
@@ -73,9 +84,9 @@ else
 
 	wait_interface
 
-	if [ "$1" == "wifi1" ]; then
-		#hciattach /dev/ttyS2 any 3000000 flow
-		#Uart baudrate:115200 for Labtool
+	# If wifi1, attach BT
+	if [ "$1" = "wifi1" ]; then
+		# hciattach /dev/ttyS2 any 3000000 flow
 		hciattach /dev/ttyS2 any 115200 flow
 		sleep 1
 		hciconfig hci0 reset

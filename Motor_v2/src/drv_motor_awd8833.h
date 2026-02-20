@@ -5,7 +5,7 @@
 #include <linux/types.h>
 #include <linux/delay.h>
 
-#include "pega_gpio.h"
+#include "drv_motor_gpio.h"
 
 /** @defgroup GPIO_pins_define  GPIO pins define
   * @{
@@ -14,12 +14,22 @@
 /** @defgroup full step and half step mode delay, uint us.
   * @{
   */
-#define AW_FULL_STEP_DELAY				5000 // 20000
-#define AW_HALF_STEP_DELAY				AW_FULL_STEP_DELAY / 2
-#define AW_TEST_CYCLE_COUNT				5
-
-#define AW8646_DRIVER_VERSION			"v0.0.0.2"
-
+#define AW8646_DRIVER_VERSION			"v0.0.0.5"
+//==============================================================================
+/* Num of Timer : 12*/
+/* Timer0 ~ 3	(unit) 61 us */
+/* Timer4 ~ 11	(unit) 1  ms */
+#define MOTOR_TIMER				3
+/* Timer unit (61 us) */
+#define SPEED_OPTION_NUM		4
+#define PAN_SPEED_1				34	//2.074 ms		//warning 
+#define PAN_SPEED_2				30	//1.830 ms
+#define PAN_SPEED_3				20	//1.220 ms
+#define PAN_SPEED_4				17	//1.037 ms		//max
+#define RISING_SPEED_1			60	//3.660 ms
+#define RISING_SPEED_2			40	//2.440 ms
+#define RISING_SPEED_3			30	//1.830 ms
+#define RISING_SPEED_4			19	//1.159 ms		//max
 
 typedef enum aw_motor
 {
@@ -31,12 +41,6 @@ typedef enum aw_direction {
 	AW_REVERSE = 0,
 	AW_FORWARD = 1,
 } aw_direction;
-
-typedef enum aw_mode {
-	AW_STEP_MODE = 0,
-	AW_DEGREE_MODE = 1,
-	AW_TIMER_MODE = 2,
-} aw_mode;
 
 typedef enum aw_step_select {
 	AW_FULL_STEP = 0,
@@ -61,38 +65,24 @@ typedef enum aw_half_step_state {
 	AW_HALF_STEP_8 = 7,
 } aw_half_step_state;
 
-/*
-typedef enum aw_motor_speed {
-	AW_SPEED_LOW = 0,
-	AW_SPEED_MID = 1,
-	AW_SPEED_HIGH = 2,
-	AW_SPEED_VREY_HIGH 	= 3,
-} aw_motor_speed;
-*/
-
 typedef enum aw_gpio_state {
 	AW_GPIO_LOW = 0,
 	AW_GPIO_HIGH = 1,
 } aw_gpio_state;
 
-typedef enum aw_bool {
-	AW_FALSE = 0,
-	AW_TRUE = 1,
+typedef enum aw_status {
+	AW_IDLE = 0,
+	AW_BUSY = 1,
 } aw_bool;
 
 //==============================================================================
-void awd8833c_gpio_init(void);
-void awd8833c_set_enable(u8 en_select, u8 bIsRisingMotor);
-void awd8833c_step_function(u8 direction, u8 mode_select, u32 u32step);
-void awd8833c_timer_function(u8 direction, u8 mode_select);
-void awd8833c_stop(void);
-u32 awd8833c_set_motor_speed(u8 speed_level);
-u32 awd8833c_degree2step(u8 Motor, u32 degree);
-void awd8833c_set_rotate_speed(u32 angle_s, u8 step_angle);
-void awd8833c_motor_launch_by_time(u8 bIsRisingMotor, u8 direction, u8 speed, u32 u32msecs);
-void awd8833c_motor_launch_by_degree(u8 motor, u8 direction, u8 speed, u32 u32degree);
-void awd8833c_motor_launch_by_step(u8 bIsRisingMotor, u8 direction, u8 speed, u32 u32step);
-
+void drv_motor_sel(u8 en_select, u8 bIsRisingMotor);
+void drv_motor_stop(void);
+void drv_motor_restore_IOstatus(int motor);
+void drv_motor_fullstep_forward(void);
+void drv_motor_fullstep_reverse(void);
+void drv_motor_halfstep_forward(void);
+void drv_motor_halfstep_reverse(void);
 
 //==============================================================================
 #endif
